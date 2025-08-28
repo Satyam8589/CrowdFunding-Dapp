@@ -39,6 +39,8 @@ export default function CampaignDetailsPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [showWalletPrompt, setShowWalletPrompt] = useState(false);
+  const [showAllBackers, setShowAllBackers] = useState(false);
+  const [displayLimit, setDisplayLimit] = useState(4);
 
   useEffect(() => {
     setIsMounted(true);
@@ -87,8 +89,11 @@ export default function CampaignDetailsPage() {
     }
   };
 
-  const handleContributeSuccess = () => {
-    fetchCampaignData(); // Refresh data after contribution
+  const handleContributeSuccess = async () => {
+    // Add a small delay to ensure blockchain state has updated
+    setTimeout(async () => {
+      await fetchCampaignData(); // Refresh data after contribution
+    }, 1000);
   };
 
   if (isLoading) {
@@ -313,32 +318,54 @@ export default function CampaignDetailsPage() {
                   Recent Backers ({donators.donators.length})
                 </h2>
                 <div className="space-y-3">
-                  {[...donators.donators]
-                    .slice(-10)
-                    .reverse()
-                    .map((donator, index) => (
-                      <div
-                        key={index}
-                        className="flex justify-between items-center py-3 border-b border-gray-100 last:border-b-0"
-                      >
-                        <ExpandableAddress
-                          address={donator}
-                          className="flex-1"
-                        />
-                        <span className="text-sm font-semibold text-gray-900 ml-4">
-                          {parseFloat(
-                            donators.donations[
-                              donators.donators.length - 1 - index
-                            ]
-                          ).toFixed(4)}{" "}
-                          ETH
-                        </span>
-                      </div>
-                    ))}
-                  {donators.donators.length > 10 && (
-                    <p className="text-sm text-gray-500 text-center pt-2">
-                      And {donators.donators.length - 10} more backers...
-                    </p>
+                  {(() => {
+                    // Get the most recent donators (reverse the array to show newest first)
+                    const sortedDonators = [...donators.donators].reverse();
+                    const sortedDonations = [...donators.donations].reverse();
+
+                    // Show only the display limit (4 initially)
+                    const displayCount = showAllBackers
+                      ? sortedDonators.length
+                      : Math.min(displayLimit, sortedDonators.length);
+
+                    return sortedDonators
+                      .slice(0, displayCount)
+                      .map((donator, index) => (
+                        <div
+                          key={`${donator}-${index}`}
+                          className="flex justify-between items-center py-3 border-b border-gray-100 last:border-b-0"
+                        >
+                          <ExpandableAddress
+                            address={donator}
+                            className="flex-1"
+                          />
+                          <span className="text-sm font-semibold text-gray-900 ml-4">
+                            {parseFloat(sortedDonations[index]).toFixed(4)} ETH
+                          </span>
+                        </div>
+                      ));
+                  })()}
+
+                  {/* Load More / Show Less Button */}
+                  {donators.donators.length > 3 && (
+                    <div className="text-center pt-4">
+                      {!showAllBackers ? (
+                        <button
+                          onClick={() => setShowAllBackers(true)}
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200 hover:underline"
+                        >
+                          Load More ({donators.donators.length - displayLimit}{" "}
+                          more backers)
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setShowAllBackers(false)}
+                          className="text-gray-600 hover:text-gray-800 text-sm font-medium transition-colors duration-200 hover:underline"
+                        >
+                          Show Less
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>

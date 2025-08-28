@@ -597,9 +597,40 @@ export const useCampaigns = () => {
       }
 
       // Fetch donators - this is a view function so it works without wallet
-      const [donators, donations] = await contractInstance.getDonators(
-        campaignId
-      );
+      console.log("About to call getDonators with campaignId:", campaignId);
+      const result = await contractInstance.getDonators(campaignId);
+      console.log("getDonators result:", result);
+      console.log("Result type:", typeof result);
+      console.log("Is array:", Array.isArray(result));
+
+      let donators, donations;
+
+      // Handle different possible return formats
+      if (Array.isArray(result) && result.length === 2) {
+        // If it's a tuple array [donators, donations]
+        [donators, donations] = result;
+      } else if (
+        result &&
+        typeof result === "object" &&
+        result.donators &&
+        result.donations
+      ) {
+        // If it's an object {donators, donations}
+        donators = result.donators;
+        donations = result.donations;
+      } else if (
+        result &&
+        Array.isArray(result[0]) &&
+        Array.isArray(result[1])
+      ) {
+        // If it's a nested structure
+        donators = result[0];
+        donations = result[1];
+      } else {
+        console.error("Unexpected getDonators result format:", result);
+        donators = [];
+        donations = [];
+      }
 
       console.log("Raw donators data:", { donators, donations });
       console.log("Donators length:", donators?.length);
@@ -607,7 +638,23 @@ export const useCampaigns = () => {
 
       return {
         donators: donators || [],
-        donations: donations ? donations.map((d) => ethers.formatEther(d)) : [],
+        donations: donations
+          ? donations.map((d) => {
+              // Check if it's already a formatted string or needs conversion
+              if (typeof d === "string" && !d.includes("e")) {
+                // Already formatted, return as is
+                return d;
+              } else {
+                // Convert from wei to ETH
+                try {
+                  return ethers.formatEther(d);
+                } catch (error) {
+                  console.warn("Could not format donation amount:", d, error);
+                  return "0.0000";
+                }
+              }
+            })
+          : [],
       };
     } catch (err) {
       console.error("Error fetching donators:", err);
