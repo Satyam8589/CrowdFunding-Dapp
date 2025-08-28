@@ -36,6 +36,64 @@ export default function CreateCampaignPage() {
             </p>
           </div>
 
+          {/* Platform Fee Information */}
+          <div className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-xl p-6">
+            <div className="flex items-start space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  💰 Platform Fee: 1% on Withdrawal
+                </h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p>
+                    <strong>Good news!</strong> Creating campaigns is completely{" "}
+                    <span className="text-green-600 font-semibold">free</span>.
+                    We only charge a small 1% fee when you successfully withdraw
+                    funds.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className="bg-white rounded-lg p-3 border border-gray-200">
+                      <div className="text-green-600 font-semibold">
+                        ✅ Free to Create
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        No upfront costs
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-lg p-3 border border-gray-200">
+                      <div className="text-blue-600 font-semibold">
+                        🎯 1% on Success
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        Only when you withdraw
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-3">
+                    Example: If you raise 5 ETH and withdraw, you receive 4.95
+                    ETH (0.05 ETH platform fee)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <NetworkRequirement action="create">
             <CampaignForm onSuccess={handleSuccess} />
           </NetworkRequirement>

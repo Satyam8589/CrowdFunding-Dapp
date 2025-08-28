@@ -350,12 +350,34 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
             </button>
 
             {/* Fee Notice */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-blue-800 text-xs">
-                Your contribution will be sent directly to the campaign. The
-                campaign creator can withdraw funds after the deadline (with a
-                1% platform fee).
-              </p>
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="w-5 h-5 text-blue-600 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-blue-900 text-sm font-medium mb-1">
+                    💰 Platform Fee: 1% (deducted on withdrawal)
+                  </p>
+                  <p className="text-blue-700 text-xs leading-relaxed">
+                    Your full contribution goes directly to the campaign. The
+                    creator pays a 1% fee only when withdrawing funds, helping
+                    maintain our decentralized platform.
+                  </p>
+                </div>
+              </div>
             </div>
           </form>
         </NetworkRequirement>

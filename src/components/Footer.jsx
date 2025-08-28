@@ -105,11 +105,38 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>
-            &copy; 2025 CrowdFund. All rights reserved. Built with ❤️ on
-            Ethereum.
-          </p>
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          {/* Platform Fee Notice */}
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center space-x-2 bg-blue-900 bg-opacity-50 rounded-full px-4 py-2 text-sm">
+              <svg
+                className="w-4 h-4 text-blue-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span className="text-blue-300 font-medium">
+                Transparent Pricing:
+              </span>
+              <span className="text-white">
+                1% platform fee only on withdrawal
+              </span>
+            </div>
+          </div>
+
+          <div className="text-center text-sm text-gray-400">
+            <p>
+              &copy; 2025 CrowdFund. All rights reserved. Built with ❤️ on
+              Ethereum.
+            </p>
+          </div>
         </div>
       </div>
     </footer>

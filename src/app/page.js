@@ -202,6 +202,87 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Platform Fee Notice */}
+      <section className="py-12 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-black bg-opacity-10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <div className="bg-white bg-opacity-20 rounded-full p-3 mr-4">
+                <svg
+                  className="w-8 h-8 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold">
+                Transparent Fee Structure
+              </h3>
+            </div>
+            <div className="max-w-4xl mx-auto">
+              <p className="text-lg md:text-xl mb-6 leading-relaxed">
+                Our platform operates with a{" "}
+                <span className="font-bold text-yellow-300 text-2xl">
+                  1% platform fee
+                </span>
+                deducted only when campaign creators withdraw their funds after
+                successful funding.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <div className="text-3xl font-bold text-yellow-600 mb-2">
+                    1%
+                  </div>
+                  <div className="text-sm font-medium text-gray-800">
+                    Platform Fee
+                  </div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    Only on withdrawal
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <div className="text-3xl font-bold text-green-600 mb-2">
+                    0%
+                  </div>
+                  <div className="text-sm font-medium text-gray-800">
+                    Donation Fee
+                  </div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    Support projects freely
+                  </div>
+                </div>
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <div className="text-3xl font-bold text-blue-600 mb-2">
+                    100%
+                  </div>
+                  <div className="text-sm font-medium text-gray-800">
+                    Transparency
+                  </div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    All transactions on-chain
+                  </div>
+                </div>
+              </div>
+              <div className="mt-8 p-4 bg-white rounded-xl shadow-lg">
+                <p className="text-sm text-center text-gray-800">
+                  <strong>Example:</strong> If you raise 10 ETH and withdraw,
+                  you receive 9.9 ETH (0.1 ETH platform fee helps maintain our
+                  services)
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
