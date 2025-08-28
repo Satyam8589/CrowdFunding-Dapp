@@ -55,18 +55,6 @@ export default function CampaignDetailsPage() {
       try {
         donatorsData = await getDonators(campaignId);
         console.log("Donators data fetched:", donatorsData);
-
-        // Temporary test data to verify UI works
-        if (donatorsData.donators.length === 0) {
-          console.log("No donators found, adding test data for debugging");
-          donatorsData = {
-            donators: [
-              "0x1234567890123456789012345678901234567890",
-              "0x0987654321098765432109876543210987654321",
-            ],
-            donations: ["0.1", "0.05"],
-          };
-        }
       } catch (donatorError) {
         console.log("Could not fetch donators:", donatorError);
       }
