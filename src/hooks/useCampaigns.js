@@ -203,9 +203,7 @@ export const useCampaigns = () => {
 
                 // If it contains only digits (wei), convert from wei to ETH
                 if (/^\d+$/.test(amountStr) && amountStr !== "0") {
-                  formattedAmount = formatEther(
-                    campaign.amountCollected
-                  );
+                  formattedAmount = formatEther(campaign.amountCollected);
                 }
                 // If it already looks like an ETH amount (contains decimal), use as is
                 else if (/^\d+\.?\d*$/.test(amountStr)) {
@@ -213,9 +211,7 @@ export const useCampaigns = () => {
                 }
                 // If it's a hex string, convert from wei
                 else if (amountStr.startsWith("0x")) {
-                  formattedAmount = formatEther(
-                    campaign.amountCollected
-                  );
+                  formattedAmount = formatEther(campaign.amountCollected);
                 }
                 // Fallback: use the string value or default
                 else {

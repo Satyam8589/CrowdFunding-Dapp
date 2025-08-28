@@ -34,7 +34,8 @@ export default function CampaignsPage() {
       const now = Math.floor(Date.now() / 1000);
       filtered = filtered.filter((campaign) => {
         const isExpired = parseInt(campaign.deadline) < now;
-        const isCompleted = calculateProgress(campaign.amountCollected, campaign.target) >= 100;
+        const isCompleted =
+          calculateProgress(campaign.amountCollected, campaign.target) >= 100;
 
         switch (statusFilter) {
           case "active":
@@ -60,13 +61,19 @@ export default function CampaignsPage() {
           try {
             return Number(BigInt(b.target) - BigInt(a.target));
           } catch {
-            return parseFloat(formatEther(b.target)) - parseFloat(formatEther(a.target));
+            return (
+              parseFloat(formatEther(b.target)) -
+              parseFloat(formatEther(a.target))
+            );
           }
         case "target_low":
           try {
             return Number(BigInt(a.target) - BigInt(b.target));
           } catch {
-            return parseFloat(formatEther(a.target)) - parseFloat(formatEther(b.target));
+            return (
+              parseFloat(formatEther(a.target)) -
+              parseFloat(formatEther(b.target))
+            );
           }
         case "progress":
           const progressA = calculateProgress(a.amountCollected, a.target);

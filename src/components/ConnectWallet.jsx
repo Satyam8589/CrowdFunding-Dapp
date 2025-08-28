@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useWallet } from "../hooks/useWallet";
 import { formatAddress } from "../lib/utils";
 
@@ -19,10 +20,22 @@ export default function ConnectWallet() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const buttonRef = useRef(null);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isMenuOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.right - 224 + window.scrollX, // 224px is the width of the dropdown (w-56)
+      });
+    }
+  }, [isMenuOpen]);
 
   // Prevent hydration mismatch by not rendering wallet-dependent content until mounted
   if (!isMounted) {
@@ -49,32 +62,91 @@ export default function ConnectWallet() {
 
   if (isConnected) {
     return (
-      <div className="relative">
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors"
-        >
+      <div className="flex items-center space-x-2">
+        {/* Address Display */}
+        <div className="flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg">
           <span className="w-2 h-2 bg-green-300 rounded-full"></span>
           <span>{formatAddress(address)}</span>
-        </button>
+        </div>
 
-        {isMenuOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-            <div className="p-4 border-b border-gray-200">
-              <p className="text-sm text-gray-600">Connected Account</p>
-              <p className="text-sm font-mono break-all">{address}</p>
-            </div>
-            <button
-              onClick={() => {
-                disconnectWallet();
-                setIsMenuOpen(false);
-              }}
-              className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-b-lg transition-colors"
+        {/* Dropdown Menu Button */}
+        <div className="relative">
+          <button
+            ref={buttonRef}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="bg-gray-600 hover:bg-gray-700 text-white p-2 rounded-lg transition-colors"
+            title="Account Menu"
+          >
+            <svg
+              className={`w-4 h-4 transition-transform ${
+                isMenuOpen ? "rotate-180" : ""
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Disconnect
-            </button>
-          </div>
-        )}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {/* Portal-based dropdown menu */}
+          {isMenuOpen &&
+            isMounted &&
+            createPortal(
+              <>
+                {/* Backdrop to close menu when clicking outside */}
+                <div
+                  className="fixed inset-0 z-[9998]"
+                  onClick={() => setIsMenuOpen(false)}
+                ></div>
+
+                <div
+                  className="fixed w-56 bg-white border border-gray-200 rounded-lg shadow-xl z-[9999]"
+                  style={{
+                    top: `${menuPosition.top}px`,
+                    left: `${menuPosition.left}px`,
+                  }}
+                >
+                  <div className="p-4 border-b border-gray-200">
+                    <p className="text-sm text-gray-600 mb-1">
+                      Connected Account
+                    </p>
+                    <p className="text-xs font-mono break-all text-gray-800 bg-gray-50 p-2 rounded">
+                      {address}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      disconnectWallet();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-b-lg transition-colors flex items-center space-x-2"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    <span>Disconnect Wallet</span>
+                  </button>
+                </div>
+              </>,
+              document.body
+            )}
+        </div>
       </div>
     );
   }

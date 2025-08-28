@@ -7,12 +7,65 @@ import {
   CROWDFUNDING_ABI,
   CHAIN_ID,
 } from "../../lib/constants";
+import { calculateProgress } from "../../lib/utils";
 import ContractDebugger from "../../components/ContractDebugger";
 
 export default function TestPage() {
   const [contractData, setContractData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Test different progress values
+  const testCases = [
+    {
+      collected: "5000000000000000000",
+      target: "10000000000000000000",
+      expectedProgress: 50,
+      type: "wei",
+    },
+    {
+      collected: "2500000000000000000",
+      target: "10000000000000000000",
+      expectedProgress: 25,
+      type: "wei",
+    },
+    {
+      collected: "7500000000000000000",
+      target: "10000000000000000000",
+      expectedProgress: 75,
+      type: "wei",
+    },
+    {
+      collected: "10000000000000000000",
+      target: "10000000000000000000",
+      expectedProgress: 100,
+      type: "wei",
+    },
+    {
+      collected: "5.0000",
+      target: "10.0000",
+      expectedProgress: 50,
+      type: "ETH",
+    },
+    {
+      collected: "2.5000",
+      target: "10.0000",
+      expectedProgress: 25,
+      type: "ETH",
+    },
+    {
+      collected: "7.5000",
+      target: "10.0000",
+      expectedProgress: 75,
+      type: "ETH",
+    },
+    {
+      collected: "10.0000",
+      target: "10.0000",
+      expectedProgress: 100,
+      type: "ETH",
+    },
+  ];
 
   const testContract = async () => {
     setLoading(true);
@@ -189,6 +242,62 @@ export default function TestPage() {
           )}
         </div>
       )}
+
+      {/* Progress Bar Test Section */}
+      <div className="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+        <h2 className="text-2xl font-bold mb-4">Progress Bar Test</h2>
+
+        {testCases.map((testCase, index) => {
+          const progress = calculateProgress(
+            testCase.collected,
+            testCase.target
+          );
+
+          return (
+            <div
+              key={index}
+              className="mb-6 p-4 border border-gray-200 rounded-lg bg-white"
+            >
+              <h3 className="font-semibold mb-2">
+                Test Case {index + 1} ({testCase.type})
+              </h3>
+              <p className="text-sm text-gray-600 mb-2">
+                Collected: {testCase.collected} {testCase.type} | Target:{" "}
+                {testCase.target} {testCase.type}
+              </p>
+              <p className="text-sm text-gray-600 mb-2">
+                Expected: {testCase.expectedProgress}% | Calculated: {progress}%
+              </p>
+
+              {/* Progress Bar */}
+              <div className="mb-2">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">
+                    Progress
+                  </span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {progress.toFixed(1)}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div
+                    className="bg-blue-500 h-3 rounded-full transition-all duration-700 ease-out"
+                    style={{ width: `${Math.min(progress, 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* Debug Info */}
+              <div className="text-xs text-gray-500">
+                Width style: {Math.min(progress, 100)}% | Progress is{" "}
+                {progress === testCase.expectedProgress
+                  ? "✅ Correct"
+                  : "❌ Incorrect"}
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">Contract Debugger</h2>

@@ -238,8 +238,7 @@ export default function CampaignDetailsPage() {
                       {formatEther(campaign.amountCollected)} ETH
                     </span>
                     <span className="text-sm text-gray-600">
-                      raised of {formatEther(campaign.target)} ETH
-                      target
+                      raised of {formatEther(campaign.target)} ETH target
                     </span>
                   </div>
 

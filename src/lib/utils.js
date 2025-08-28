@@ -7,25 +7,32 @@ export const formatEther = (value) => {
     if (value === undefined || value === null || value === "") {
       return "0";
     }
-    
+
     // Convert to string to handle BigInt or number inputs
     const stringValue = value.toString();
-    
+
     // If it's already a small decimal number (likely already in ETH), return as is
     const numValue = parseFloat(stringValue);
-    if (!isNaN(numValue) && numValue < 1000 && stringValue.includes('.') && !stringValue.includes('e')) {
+    if (
+      !isNaN(numValue) &&
+      numValue < 1000 &&
+      stringValue.includes(".") &&
+      !stringValue.includes("e")
+    ) {
       return parseFloat(numValue).toFixed(4);
     }
-    
+
     // Remove decimal point for wei values (convert "5000000000000000000.0" to "5000000000000000000")
-    const cleanWeiValue = stringValue.includes('.') ? stringValue.split('.')[0] : stringValue;
-    
+    const cleanWeiValue = stringValue.includes(".")
+      ? stringValue.split(".")[0]
+      : stringValue;
+
     // Validate that it's a valid integer string
     if (!/^\d+$/.test(cleanWeiValue)) {
       console.warn("Invalid wei format:", stringValue);
       return "0";
     }
-    
+
     // Convert wei to ETH
     return parseFloat(ethers.formatEther(cleanWeiValue)).toFixed(4);
   } catch (error) {
@@ -77,32 +84,21 @@ export const formatDate = (timestamp) => {
 };
 
 export const calculateProgress = (collected, target) => {
-  if (!target || target === "0" || target === 0) return 0;
-  if (!collected || collected === "0" || collected === 0) return 0;
-  
   try {
-    // Clean the values (remove decimals for wei values)
-    const cleanCollected = collected.toString().includes('.') ? 
-      collected.toString().split('.')[0] : collected.toString();
-    const cleanTarget = target.toString().includes('.') ? 
-      target.toString().split('.')[0] : target.toString();
-    
-    // Try BigInt comparison first for large wei values
-    const collectedBig = BigInt(cleanCollected);
-    const targetBig = BigInt(cleanTarget);
-    
-    // Convert to percentage using BigInt arithmetic
-    const progress = Number((collectedBig * 100n) / targetBig);
+    // Convert both values to ETH format for consistent calculation
+    const collectedEth = formatEther(collected);
+    const targetEth = formatEther(target);
+
+    const collectedFloat = parseFloat(collectedEth) || 0;
+    const targetFloat = parseFloat(targetEth) || 0;
+
+    if (targetFloat === 0) return 0;
+
+    const progress = (collectedFloat / targetFloat) * 100;
     return Math.min(Math.max(progress, 0), 100);
   } catch (error) {
-    try {
-      // Fallback to regular number comparison
-      const progress = (parseFloat(collected) / parseFloat(target)) * 100;
-      return Math.min(Math.max(progress, 0), 100);
-    } catch (fallbackError) {
-      console.error("Error calculating progress:", fallbackError);
-      return 0;
-    }
+    console.error("Error calculating progress:", error);
+    return 0;
   }
 };
 
@@ -121,22 +117,22 @@ export const getCampaignStatus = (deadline, withdrawn, target, collected) => {
 
   // Check withdrawal status
   if (withdrawn === true || withdrawn === "true") return "withdrawn";
-  
+
   // Check if expired
   const deadlineNum = parseInt(deadline);
   if (deadlineNum < now) return "expired";
-  
+
   // Check if completed (target reached)
   try {
     if (!target || !collected) return "active";
-    
+
     // Use the same logic as calculateProgress
     const progress = calculateProgress(collected, target);
     if (progress >= 100) return "completed";
   } catch (error) {
     console.error("Error checking campaign status:", error);
   }
-  
+
   return "active";
 };
 
