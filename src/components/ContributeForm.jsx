@@ -135,45 +135,55 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
 
   if (!isConnected) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Contribute to this Campaign
-        </h3>
+      <div className="bg-gradient-to-br from-white via-blue-50 to-purple-50 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-2xl">
+        <div className="relative">
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl"></div>
+          <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-xl"></div>
 
-        <div className="text-center py-8">
-          <div className="mb-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-blue-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-6">
+            🚀 Contribute to this Campaign
+          </h3>
+
+          <div className="text-center py-8 relative z-10">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+              </div>
+              <h4 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3">
+                Wallet Connection Required
+              </h4>
+              <p className="text-gray-600 mb-8 leading-relaxed">
+                To fund this campaign, please connect your wallet first. This
+                ensures secure and transparent donations directly to the
+                campaign creator.
+              </p>
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              Wallet Required
-            </h4>
-            <p className="text-gray-600 mb-6">
-              To fund this campaign, please connect your wallet first. This
-              ensures secure and transparent donations directly to the campaign
-              creator.
-            </p>
-          </div>
 
-          <div className="flex justify-center">
-            <ConnectWallet />
-          </div>
+            <div className="flex justify-center mb-6">
+              <ConnectWallet />
+            </div>
 
-          <div className="mt-4 text-xs text-gray-500">
-            🔒 Your wallet will be used to securely send ETH directly to the
-            campaign
+            <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-xl p-4 backdrop-blur-sm border border-white/30">
+              <div className="flex items-center justify-center space-x-2 text-sm text-gray-700">
+                <span className="text-xl">🔒</span>
+                <span>
+                  Your wallet will be used to securely send ETH directly to the
+                  campaign
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -182,44 +192,54 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
 
   if (!isCorrectNetwork) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Contribute to this Campaign
-        </h3>
+      <div className="bg-gradient-to-br from-white via-orange-50 to-red-50 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-2xl">
+        <div className="relative">
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full blur-xl"></div>
+          <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-red-400/20 to-pink-400/20 rounded-full blur-xl"></div>
 
-        <div className="text-center py-8">
-          <div className="mb-6">
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-orange-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"
-                />
-              </svg>
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-orange-900 to-red-900 bg-clip-text text-transparent mb-6">
+            ⚠️ Network Switch Required
+          </h3>
+
+          <div className="text-center py-8 relative z-10">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+              </div>
+              <h4 className="text-xl font-bold bg-gradient-to-r from-orange-900 to-red-700 bg-clip-text text-transparent mb-3">
+                Wrong Network Detected
+              </h4>
+              <p className="text-gray-600 mb-8 leading-relaxed">
+                Please switch to the Sepolia testnet to contribute to this
+                campaign. This ensures your transaction is processed on the
+                correct blockchain.
+              </p>
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              Wrong Network
-            </h4>
-            <p className="text-gray-600 mb-6">
-              Please switch to the Sepolia testnet to contribute to this
-              campaign. This ensures your transaction is processed on the
-              correct blockchain.
-            </p>
-          </div>
 
-          <div className="flex justify-center">
-            <ConnectWallet />
-          </div>
+            <div className="flex justify-center mb-6">
+              <ConnectWallet />
+            </div>
 
-          <div className="mt-4 text-xs text-gray-500">
-            ⚠️ This DApp only works on Sepolia testnet for security
+            <div className="bg-gradient-to-r from-orange-100 to-red-100 rounded-xl p-4 backdrop-blur-sm border border-white/30">
+              <div className="flex items-center justify-center space-x-2 text-sm text-gray-700">
+                <span className="text-xl">⚡</span>
+                <span>
+                  This DApp only works on Sepolia testnet for security
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -228,40 +248,52 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
 
   if (isOwner) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Contribute to this Campaign
-        </h3>
+      <div className="bg-gradient-to-br from-white via-blue-50 to-indigo-50 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-2xl">
+        <div className="relative">
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-xl"></div>
+          <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-xl"></div>
 
-        <div className="text-center py-8">
-          <div className="mb-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-blue-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent mb-6">
+            👑 Campaign Owner Panel
+          </h3>
+
+          <div className="text-center py-8 relative z-10">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <h4 className="text-xl font-bold bg-gradient-to-r from-blue-900 to-indigo-700 bg-clip-text text-transparent mb-3">
+                You Own This Campaign
+              </h4>
+              <p className="text-gray-600 mb-8 leading-relaxed">
+                Campaign creators cannot contribute to their own campaigns to
+                ensure transparency and fairness in the funding process.
+              </p>
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              Campaign Owner
-            </h4>
-            <p className="text-gray-600 mb-4">
-              You are the owner of this campaign. Campaign creators cannot
-              contribute to their own campaigns to ensure transparency and
-              fairness.
-            </p>
-          </div>
 
-          <div className="text-xs text-gray-500 bg-blue-50 rounded-lg p-3">
-            💡 Share your campaign with others to get contributions!
+            <div className="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-xl p-6 backdrop-blur-sm border border-white/30">
+              <div className="flex items-center justify-center space-x-3 text-blue-700">
+                <span className="text-2xl">💡</span>
+                <div className="text-left">
+                  <div className="font-semibold">Share your campaign!</div>
+                  <div className="text-sm text-blue-600">
+                    Get more contributors by sharing with your network
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -270,44 +302,72 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
 
   if (isExpired || isWithdrawn) {
     return (
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Contribute to this Campaign
-        </h3>
+      <div className="bg-gradient-to-br from-white via-gray-50 to-slate-50 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-2xl">
+        <div className="relative">
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-gray-400/20 to-slate-400/20 rounded-full blur-xl"></div>
+          <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-slate-400/20 to-gray-400/20 rounded-full blur-xl"></div>
 
-        <div className="text-center py-8">
-          <div className="mb-6">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-slate-700 to-gray-800 bg-clip-text text-transparent mb-6">
+            {isWithdrawn ? "🎯 Campaign Completed" : "⏰ Campaign Expired"}
+          </h3>
+
+          <div className="text-center py-8 relative z-10">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-gray-500 to-slate-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <h4 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-slate-700 bg-clip-text text-transparent mb-3">
+                Campaign{" "}
+                {isWithdrawn ? "Successfully Completed" : "Has Expired"}
+              </h4>
+              <p className="text-gray-600 mb-8 leading-relaxed">
+                This campaign has{" "}
+                {isWithdrawn
+                  ? "ended successfully and funds have been withdrawn by the creator"
+                  : "expired and is no longer accepting contributions"}
+                .
+              </p>
             </div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
-              Campaign {isWithdrawn ? "Completed" : "Expired"}
-            </h4>
-            <p className="text-gray-600 mb-4">
-              This campaign has{" "}
-              {isWithdrawn
-                ? "ended and funds have been withdrawn by the creator"
-                : "expired and is no longer accepting contributions"}
-              .
-            </p>
-          </div>
 
-          <div className="text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
-            {isWithdrawn
-              ? "✅ Funds successfully withdrawn"
-              : "⏰ Deadline has passed"}
+            <div
+              className={`bg-gradient-to-r ${
+                isWithdrawn
+                  ? "from-green-100 to-emerald-100 border-green-200"
+                  : "from-gray-100 to-slate-100 border-gray-200"
+              } rounded-xl p-6 backdrop-blur-sm border`}
+            >
+              <div
+                className={`flex items-center justify-center space-x-3 ${
+                  isWithdrawn ? "text-green-700" : "text-gray-600"
+                }`}
+              >
+                <span className="text-2xl">{isWithdrawn ? "✅" : "⏰"}</span>
+                <div className="text-center">
+                  <div className="font-semibold">
+                    {isWithdrawn
+                      ? "Funds Successfully Withdrawn"
+                      : "Deadline Has Passed"}
+                  </div>
+                  <div className="text-sm opacity-75">
+                    {isWithdrawn
+                      ? "The campaign creator has received the funds"
+                      : "No more contributions can be made"}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -316,149 +376,189 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
 
   return (
     <>
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Contribute to this Campaign
-        </h3>
+      <div className="bg-gradient-to-br from-white via-blue-50 to-purple-50 backdrop-blur-lg border border-white/30 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
+        <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-2xl"></div>
 
-        <NetworkRequirement action="fund">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label
-                htmlFor="amount"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Amount (ETH)
-              </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  id="amount"
-                  value={amount}
-                  onChange={handleAmountChange}
-                  placeholder="0.001"
-                  step="0.001"
-                  min="0.001"
-                  className={`w-full border rounded-lg px-3 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    formError ? "border-red-500" : "border-gray-300"
-                  }`}
-                  disabled={isLoading}
-                />
-                <span className="absolute right-3 top-2 text-gray-500 text-sm">
-                  ETH
-                </span>
-              </div>
-              {formError && (
-                <p className="text-red-500 text-sm mt-1">{formError}</p>
-              )}
-            </div>
+        <div className="relative z-10">
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-6 flex items-center">
+            <span className="mr-3 text-3xl">💎</span>
+            Contribute to this Campaign
+          </h3>
 
-            {/* Quick amount buttons */}
-            <div>
-              <p className="text-sm text-gray-600 mb-2">Quick amounts:</p>
-              <div className="grid grid-cols-4 gap-2">
-                {[0.01, 0.05, 0.1, 0.5].map((quickAmount) => (
-                  <button
-                    key={quickAmount}
-                    type="button"
-                    onClick={() => setAmount(quickAmount.toString())}
-                    className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          <NetworkRequirement action="fund">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Amount Input */}
+              <div>
+                <label
+                  htmlFor="amount"
+                  className="block text-sm font-semibold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent mb-3"
+                >
+                  💰 Amount (ETH)
+                </label>
+                <div className="relative group">
+                  <input
+                    type="number"
+                    id="amount"
+                    value={amount}
+                    onChange={handleAmountChange}
+                    placeholder="0.001"
+                    step="0.001"
+                    min="0.001"
+                    className={`w-full bg-white/80 backdrop-blur-sm border-2 rounded-xl px-4 py-4 pr-16 text-lg font-medium focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl ${
+                      formError
+                        ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
+                        : "border-gray-200 hover:border-blue-300"
+                    }`}
                     disabled={isLoading}
-                  >
-                    {quickAmount} ETH
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Error Display */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-red-700 text-sm">{error}</p>
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading || !amount}
-              className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Contributing...
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-md">
+                    ETH
+                  </div>
                 </div>
-              ) : (
-                `Contribute ${amount || "0"} ETH`
+                {formError && (
+                  <div className="mt-2 p-3 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-lg">
+                    <p className="text-red-600 text-sm font-medium flex items-center">
+                      <span className="mr-2">⚠️</span>
+                      {formError}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Quick amount buttons */}
+              <div>
+                <p className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                  <span className="mr-2">⚡</span>
+                  Quick amounts:
+                </p>
+                <div className="grid grid-cols-4 gap-3">
+                  {[0.01, 0.05, 0.1, 0.5].map((quickAmount) => (
+                    <button
+                      key={quickAmount}
+                      type="button"
+                      onClick={() => setAmount(quickAmount.toString())}
+                      className="group relative px-4 py-3 bg-gradient-to-r from-gray-50 to-white border-2 border-gray-200 rounded-xl hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                      disabled={isLoading}
+                    >
+                      <span className="text-sm font-semibold text-gray-700 group-hover:text-blue-700">
+                        {quickAmount}
+                      </span>
+                      <span className="text-xs text-gray-500 group-hover:text-blue-500 block">
+                        ETH
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Error Display */}
+              {error && (
+                <div className="bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-xl p-4 shadow-lg">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-red-500 text-xl">🚨</span>
+                    <p className="text-red-700 font-medium">{error}</p>
+                  </div>
+                </div>
               )}
-            </button>
 
-            {/* Fee Notice */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="w-5 h-5 text-blue-600 mt-0.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-blue-900 text-sm font-medium mb-1">
-                    💰 Platform Fee: 1% (deducted on withdrawal)
-                  </p>
-                  <p className="text-blue-700 text-xs leading-relaxed">
-                    Your full contribution goes directly to the campaign. The
-                    creator pays a 1% fee only when withdrawing funds, helping
-                    maintain our decentralized platform.
-                  </p>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isLoading || !amount}
+                className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 disabled:transform-none disabled:hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/30"
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
+                    <span className="text-lg">Contributing...</span>
+                  </div>
+                ) : (
+                  <span className="text-lg flex items-center justify-center">
+                    <span className="mr-2">🚀</span>
+                    Contribute {amount || "0"} ETH
+                  </span>
+                )}
+              </button>
+
+              {/* Fee Notice */}
+              <div className="bg-gradient-to-r from-blue-50 via-purple-50 to-blue-50 border-2 border-blue-200/50 rounded-xl p-5 shadow-lg backdrop-blur-sm">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-4 h-4 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-blue-900 font-bold mb-2 flex items-center">
+                      <span className="mr-2">💰</span>
+                      Platform Fee: 1% (deducted on withdrawal)
+                    </p>
+                    <p className="text-blue-700 text-sm leading-relaxed">
+                      Your full contribution goes directly to the campaign. The
+                      creator pays a 1% fee only when withdrawing funds, helping
+                      maintain our decentralized platform.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </form>
-        </NetworkRequirement>
+            </form>
+          </NetworkRequirement>
+        </div>
       </div>
 
       {/* Thank You Popup */}
       {showThankYou && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
-          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-slideUp border-2 border-green-200">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              Thank You! 🎉
-            </h3>
-            <p className="text-gray-600 mb-1">Your contribution of</p>
-            <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-green-500 mb-3">
-              {donatedAmount} ETH
-            </p>
-            <p className="text-gray-600 text-sm">
-              has been successfully donated!
-            </p>
-            <div className="mt-4">
-              <div className="w-12 h-1 bg-gradient-to-r from-green-400 to-green-500 rounded-full mx-auto"></div>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-gradient-to-br from-white via-green-50 to-emerald-50 rounded-3xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-slideUp border-2 border-green-200/50 relative overflow-hidden">
+            {/* Background decorative elements */}
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-green-400/20 to-emerald-400/20 rounded-full blur-xl"></div>
+            <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-gradient-to-br from-emerald-400/20 to-green-400/20 rounded-full blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-green-800 bg-clip-text text-transparent mb-3">
+                Thank You! 🎉
+              </h3>
+              <p className="text-gray-600 mb-2 text-sm">Your contribution of</p>
+              <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-4 mb-4 border border-green-200">
+                <p className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                  {donatedAmount} ETH
+                </p>
+              </div>
+              <p className="text-gray-600 text-sm mb-6">
+                has been successfully donated!
+              </p>
+              <div className="flex justify-center">
+                <div className="w-16 h-1 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -466,32 +566,42 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
 
       {/* Transaction Cancelled Popup */}
       {showCancelled && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
-          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-slideUp border-2 border-orange-200">
-            <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <svg
-                className="w-8 h-8 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              Funding Cancelled 🚫
-            </h3>
-            <p className="text-gray-600 mb-3">
-              The transaction was cancelled. No funds were transferred.
-            </p>
-            <p className="text-gray-500 text-sm">You can try again anytime!</p>
-            <div className="mt-4">
-              <div className="w-12 h-1 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full mx-auto"></div>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-gradient-to-br from-white via-orange-50 to-red-50 rounded-3xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-slideUp border-2 border-orange-200/50 relative overflow-hidden">
+            {/* Background decorative elements */}
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full blur-xl"></div>
+            <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-gradient-to-br from-red-400/20 to-orange-400/20 rounded-full blur-xl"></div>
+
+            <div className="relative z-10">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-orange-800 bg-clip-text text-transparent mb-3">
+                Funding Cancelled 🚫
+              </h3>
+              <div className="bg-gradient-to-r from-orange-100 to-red-100 rounded-xl p-4 mb-4 border border-orange-200">
+                <p className="text-gray-700 text-sm font-medium">
+                  Transaction was cancelled
+                </p>
+              </div>
+              <p className="text-gray-600 text-sm mb-6">
+                No funds were transferred. You can try again anytime!
+              </p>
+              <div className="flex justify-center">
+                <div className="w-16 h-1 bg-gradient-to-r from-orange-400 to-red-500 rounded-full"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -501,29 +611,85 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
         @keyframes fadeIn {
           from {
             opacity: 0;
+            backdrop-filter: blur(0px);
           }
           to {
             opacity: 1;
+            backdrop-filter: blur(8px);
           }
         }
 
         @keyframes slideUp {
           from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(30px) scale(0.95);
           }
           to {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes pulse {
+          0%,
+          100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.05);
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: -200px 0;
+          }
+          100% {
+            background-position: calc(200px + 100%) 0;
           }
         }
 
         .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out;
+          animation: fadeIn 0.4s ease-out;
         }
 
         .animate-slideUp {
-          animation: slideUp 0.3s ease-out;
+          animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .animate-pulse-slow {
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        .animate-shimmer {
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.4) 50%,
+            transparent 100%
+          );
+          background-size: 200px 100%;
+          animation: shimmer 2s infinite;
+        }
+
+        /* Glass morphism effect */
+        .glass {
+          background: rgba(255, 255, 255, 0.25);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        /* Custom gradient borders */
+        .gradient-border {
+          position: relative;
+          background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+          padding: 2px;
+          border-radius: 12px;
+        }
+
+        .gradient-border > * {
+          background: white;
+          border-radius: 10px;
         }
       `}</style>
     </>
