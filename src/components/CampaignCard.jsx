@@ -142,13 +142,13 @@ export default function CampaignCard({ campaign }) {
           <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-100">
             <div className="text-xs font-medium text-gray-500 mb-1">Raised</div>
             <div className="text-sm font-semibold text-gray-900">
-              {parseFloat(campaign.amountCollected).toFixed(3)} ETH
+              {formatEther(campaign.amountCollected)} ETH
             </div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-100">
             <div className="text-xs font-medium text-gray-500 mb-1">Target</div>
             <div className="text-sm font-semibold text-gray-900">
-              {parseFloat(campaign.target).toFixed(3)} ETH
+              {formatEther(campaign.target)} ETH
             </div>
           </div>
         </div>

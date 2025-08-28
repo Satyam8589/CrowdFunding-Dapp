@@ -16,6 +16,7 @@ import { useNetwork } from "../../../contexts/NetworkContext";
 import {
   formatAddress,
   formatDate,
+  formatEther,
   calculateProgress,
   getDaysLeft,
   getCampaignStatus,
@@ -234,10 +235,10 @@ export default function CampaignDetailsPage() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-2xl font-bold text-gray-900">
-                      {parseFloat(campaign.amountCollected).toFixed(4)} ETH
+                      {formatEther(campaign.amountCollected)} ETH
                     </span>
                     <span className="text-sm text-gray-600">
-                      raised of {parseFloat(campaign.target).toFixed(4)} ETH
+                      raised of {formatEther(campaign.target)} ETH
                       target
                     </span>
                   </div>
@@ -340,7 +341,7 @@ export default function CampaignDetailsPage() {
                             className="flex-1"
                           />
                           <span className="text-sm font-semibold text-gray-900 ml-4">
-                            {parseFloat(sortedDonations[index]).toFixed(4)} ETH
+                            {formatEther(sortedDonations[index])} ETH
                           </span>
                         </div>
                       ));
@@ -402,13 +403,13 @@ export default function CampaignDetailsPage() {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Target:</span>
                   <span className="font-semibold">
-                    {parseFloat(campaign.target).toFixed(4)} ETH
+                    {formatEther(campaign.target)} ETH
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Raised:</span>
                   <span className="font-semibold">
-                    {parseFloat(campaign.amountCollected).toFixed(4)} ETH
+                    {formatEther(campaign.amountCollected)} ETH
                   </span>
                 </div>
                 <div className="flex justify-between">

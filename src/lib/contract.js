@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, CROWDFUNDING_ABI } from "./constants";
+import { formatEther } from "./utils";
 
 export class ContractService {
   constructor(signer) {
@@ -151,9 +152,9 @@ export class ContractService {
         description: campaign.description,
         imageUrl: campaign.imageUrl,
         owner: campaign.owner,
-        target: ethers.formatEther(campaign.target),
+        target: formatEther(campaign.target),
         deadline: campaign.deadline.toString(),
-        amountCollected: ethers.formatEther(campaign.amountCollected),
+        amountCollected: formatEther(campaign.amountCollected),
         withdrawn: campaign.withdrawn,
       };
     } catch (error) {
@@ -188,7 +189,7 @@ export class ContractService {
       const [donators, donations] = await this.contract.getDonators(campaignId);
       return {
         donators,
-        donations: donations.map((d) => ethers.formatEther(d)),
+        donations: donations.map((d) => formatEther(d)),
       };
     } catch (error) {
       console.error("Error getting donators:", error);

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useContract } from "./useContract";
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, CROWDFUNDING_ABI, CHAIN_ID } from "../lib/constants";
+import { formatEther } from "../lib/utils";
 import {
   diagnoseContractIssue,
   checkContractDeployment,
@@ -167,7 +168,7 @@ export const useCampaigns = () => {
 
                 // If it contains only digits (wei), convert from wei to ETH
                 if (/^\d+$/.test(targetStr) && targetStr !== "0") {
-                  formattedTarget = ethers.formatEther(campaign.target);
+                  formattedTarget = formatEther(campaign.target);
                 }
                 // If it already looks like an ETH amount (contains decimal), use as is
                 else if (/^\d+\.?\d*$/.test(targetStr)) {
@@ -175,7 +176,7 @@ export const useCampaigns = () => {
                 }
                 // If it's a hex string, convert from wei
                 else if (targetStr.startsWith("0x")) {
-                  formattedTarget = ethers.formatEther(campaign.target);
+                  formattedTarget = formatEther(campaign.target);
                 }
                 // Fallback: use the string value or default
                 else {
@@ -202,7 +203,7 @@ export const useCampaigns = () => {
 
                 // If it contains only digits (wei), convert from wei to ETH
                 if (/^\d+$/.test(amountStr) && amountStr !== "0") {
-                  formattedAmount = ethers.formatEther(
+                  formattedAmount = formatEther(
                     campaign.amountCollected
                   );
                 }
@@ -212,7 +213,7 @@ export const useCampaigns = () => {
                 }
                 // If it's a hex string, convert from wei
                 else if (amountStr.startsWith("0x")) {
-                  formattedAmount = ethers.formatEther(
+                  formattedAmount = formatEther(
                     campaign.amountCollected
                   );
                 }
@@ -444,11 +445,11 @@ export const useCampaigns = () => {
         try {
           const targetStr = campaign.target.toString();
           if (/^\d+$/.test(targetStr) && targetStr !== "0") {
-            formattedTarget = ethers.formatEther(campaign.target);
+            formattedTarget = formatEther(campaign.target);
           } else if (/^\d+\.?\d*$/.test(targetStr)) {
             formattedTarget = targetStr;
           } else if (targetStr.startsWith("0x")) {
-            formattedTarget = ethers.formatEther(campaign.target);
+            formattedTarget = formatEther(campaign.target);
           } else {
             formattedTarget = targetStr === "0" ? "0" : targetStr;
           }
@@ -467,11 +468,11 @@ export const useCampaigns = () => {
         try {
           const amountStr = campaign.amountCollected.toString();
           if (/^\d+$/.test(amountStr) && amountStr !== "0") {
-            formattedAmount = ethers.formatEther(campaign.amountCollected);
+            formattedAmount = formatEther(campaign.amountCollected);
           } else if (/^\d+\.?\d*$/.test(amountStr)) {
             formattedAmount = amountStr;
           } else if (amountStr.startsWith("0x")) {
-            formattedAmount = ethers.formatEther(campaign.amountCollected);
+            formattedAmount = formatEther(campaign.amountCollected);
           } else {
             formattedAmount = amountStr === "0" ? "0" : amountStr;
           }
@@ -647,7 +648,7 @@ export const useCampaigns = () => {
               } else {
                 // Convert from wei to ETH
                 try {
-                  return ethers.formatEther(d);
+                  return formatEther(d);
                 } catch (error) {
                   console.warn("Could not format donation amount:", d, error);
                   return "0.0000";

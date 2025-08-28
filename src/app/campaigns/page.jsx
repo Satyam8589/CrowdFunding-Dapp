@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import CampaignCard from "../../components/CampaignCard";
 import Loading from "../../components/Loading";
 import { useCampaigns } from "../../hooks/useCampaigns";
+import { formatEther, calculateProgress } from "../../lib/utils";
 import { PAGINATION } from "../../lib/constants";
 
 export default function CampaignsPage() {
@@ -33,8 +34,7 @@ export default function CampaignsPage() {
       const now = Math.floor(Date.now() / 1000);
       filtered = filtered.filter((campaign) => {
         const isExpired = parseInt(campaign.deadline) < now;
-        const isCompleted =
-          parseFloat(campaign.amountCollected) >= parseFloat(campaign.target);
+        const isCompleted = calculateProgress(campaign.amountCollected, campaign.target) >= 100;
 
         switch (statusFilter) {
           case "active":
@@ -57,14 +57,20 @@ export default function CampaignsPage() {
         case "oldest":
           return parseInt(a.deadline) - parseInt(b.deadline);
         case "target_high":
-          return parseFloat(b.target) - parseFloat(a.target);
+          try {
+            return Number(BigInt(b.target) - BigInt(a.target));
+          } catch {
+            return parseFloat(formatEther(b.target)) - parseFloat(formatEther(a.target));
+          }
         case "target_low":
-          return parseFloat(a.target) - parseFloat(b.target);
+          try {
+            return Number(BigInt(a.target) - BigInt(b.target));
+          } catch {
+            return parseFloat(formatEther(a.target)) - parseFloat(formatEther(b.target));
+          }
         case "progress":
-          const progressA =
-            (parseFloat(a.amountCollected) / parseFloat(a.target)) * 100;
-          const progressB =
-            (parseFloat(b.amountCollected) / parseFloat(b.target)) * 100;
+          const progressA = calculateProgress(a.amountCollected, a.target);
+          const progressB = calculateProgress(b.amountCollected, b.target);
           return progressB - progressA;
         default:
           return 0;
