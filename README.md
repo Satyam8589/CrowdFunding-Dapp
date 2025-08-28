@@ -64,78 +64,8 @@ A modern, decentralized crowdfunding platform built on Ethereum blockchain that 
 - MetaMask or compatible Web3 wallet
 - Git
 
-### Installation
+### Project Structure
 
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/Satyam8589/CrowdFunding-Dapp.git
-   cd CrowdFunding-Dapp
-   ```
-
-2. **Install frontend dependencies**
-
-   ```bash
-   npm install
-   ```
-
-3. **Install smart contract dependencies**
-
-   ```bash
-   cd web3
-   npm install
-   cd ..
-   ```
-
-4. **Environment Setup**
-
-   ```bash
-   # Create .env.local file in root directory
-   cp .env.example .env.local
-
-   # Add your environment variables:
-   # NEXT_PUBLIC_PINATA_JWT=your_pinata_jwt
-   # NEXT_PUBLIC_PINATA_GATEWAY=your_pinata_gateway
-   ```
-
-5. **Start the development server**
-
-   ```bash
-   npm run dev
-   ```
-
-6. **Visit the application**
-   Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## � Smart Contract Deployment
-
-### Local Development
-
-```bash
-cd web3
-npx hardhat node                    # Start local blockchain
-npx hardhat run scripts/deploy.js  # Deploy contracts locally
-```
-
-### Testnet Deployment
-
-```bash
-cd web3
-npm run deploy:sepolia             # Deploy to Sepolia testnet
-npm run verify:sepolia             # Verify on Etherscan
-```
-
-### Production Networks
-
-```bash
-npm run deploy:polygon             # Deploy to Polygon mainnet
-npm run deploy:mainnet             # Deploy to Ethereum mainnet
-npm run deploy:bsc-testnet         # Deploy to BSC testnet
-```
-
-## 🏗️ Project Structure
-
-```
 CrowdFunding-Dapp/
 ├── src/
 │   ├── app/                      # Next.js 13+ app directory
@@ -223,54 +153,6 @@ npm run verify:sepolia  # Verify contracts on Etherscan
 ### Deploy on Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Satyam8589/CrowdFunding-Dapp)
-
-### Environment Variables
-
-Create `.env.local` file in the root directory:
-
-```bash
-NEXT_PUBLIC_PINATA_JWT=your_pinata_jwt_token
-NEXT_PUBLIC_PINATA_GATEWAY=your_pinata_gateway_url
-NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id
-```
-
-### Build Commands
-
-```bash
-npm install       # Install dependencies
-npm run build     # Build for production
-npm start         # Start production server
-```
-
-## 📱 Usage Guide
-
-1. **Connect Wallet**: Click "Connect Wallet" and select your preferred Web3 wallet
-2. **Browse Campaigns**: Explore active fundraising campaigns on the homepage
-3. **Create Campaign**: Use the "Create Campaign" form to launch your fundraising project
-4. **Make Donations**: Contribute to campaigns with secure blockchain transactions
-5. **Track Progress**: Monitor real-time updates of campaign funding status
-6. **Withdraw Funds**: Campaign creators can withdraw funds after successful completion
-
-## 🤝 Contributing
-
-We welcome contributions to improve the CrowdFunding DApp! Please follow these steps:
-
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Commit changes**: `git commit -m 'Add amazing feature'`
-4. **Push to branch**: `git push origin feature/amazing-feature`
-5. **Open a Pull Request**
-
-### Development Guidelines
-
-- Follow the existing code style and structure
-- Add tests for new features
-- Update documentation as needed
-- Ensure all tests pass before submitting PR
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
