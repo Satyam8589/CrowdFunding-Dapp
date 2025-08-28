@@ -20,13 +20,7 @@ export const useCampaigns = () => {
     setIsClient(true);
   }, []);
 
-  // Only run fetchCampaigns on client side
-  useEffect(() => {
-    if (isClient) {
-      fetchCampaigns();
-    }
-  }, [isClient]);
-
+  // Fetch campaigns function - avoiding useCallback for build stability
   const fetchCampaigns = async () => {
     try {
       setIsLoading(true);
@@ -49,333 +43,189 @@ export const useCampaigns = () => {
           // Check network if wallet is available (but don't require connection)
           const network = await browserProvider.getNetwork();
 
-          if (network.chainId.toString() === CHAIN_ID.toString()) {
-            // If on correct network, use the wallet provider
+          if (network.chainId.toString() === CHAIN_ID) {
             provider = browserProvider;
-            console.log("✅ Using wallet provider on correct network");
           } else {
-            // If on wrong network, always use public RPC for browsing
-            console.warn(
-              `Wrong network detected: ${network.chainId}, expected: ${CHAIN_ID}. Using public RPC for browsing.`
+            console.log(
+              `Connected to wrong network: ${network.chainId}, expected: ${CHAIN_ID}`
             );
-
-            // Force fallback to public RPC for browsing
-            const rpcEndpoints = [
-              "https://eth-sepolia.public.blastapi.io",
-              "https://sepolia.drpc.org",
-              "https://rpc.sepolia.org",
-            ];
-
-            for (const rpc of rpcEndpoints) {
-              try {
-                provider = new ethers.JsonRpcProvider(rpc);
-                await provider.getNetwork(); // Test connection
-                console.log(`✅ Connected to public RPC for browsing: ${rpc}`);
-                break;
-              } catch (rpcError) {
-                console.warn(`Failed to connect to ${rpc}:`, rpcError.message);
-                continue;
-              }
-            }
+            // Continue with public provider fallback
           }
-        } catch (providerError) {
-          console.warn(
-            "Wallet provider error, using public RPC:",
-            providerError
+        } catch (networkError) {
+          console.log(
+            "Network check failed, using public provider:",
+            networkError.message
           );
-          // Fall back to public provider with multiple RPC endpoints
+          // Continue with public provider fallback
+        }
+      }
+
+      // If no browser provider or wrong network, use public provider
+      if (!provider) {
+        try {
+          // Multiple RPC endpoints for reliability
           const rpcEndpoints = [
             "https://eth-sepolia.public.blastapi.io",
-            "https://sepolia.drpc.org",
             "https://rpc.sepolia.org",
+            "https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+            `https://sepolia.infura.io/v3/${
+              process.env.NEXT_PUBLIC_INFURA_PROJECT_ID ||
+              "9aa3d95b3bc440fa88ea12eaa4456161"
+            }`,
           ];
 
-          for (const rpc of rpcEndpoints) {
+          let connected = false;
+          for (const rpcUrl of rpcEndpoints) {
             try {
-              provider = new ethers.JsonRpcProvider(rpc);
-              await provider.getNetwork(); // Test connection
-              console.log(`✅ Connected to RPC: ${rpc}`);
+              console.log(`Trying RPC endpoint: ${rpcUrl}`);
+              provider = new ethers.JsonRpcProvider(rpcUrl);
+
+              // Test the connection
+              await provider.getBlockNumber();
+              console.log(`Successfully connected to: ${rpcUrl}`);
+              connected = true;
               break;
             } catch (rpcError) {
-              console.warn(`Failed to connect to ${rpc}:`, rpcError.message);
+              console.log(`RPC endpoint ${rpcUrl} failed:`, rpcError.message);
               continue;
             }
           }
 
-          if (!provider) {
-            throw new Error("All RPC endpoints failed to connect");
+          if (!connected) {
+            throw new Error("All RPC endpoints failed");
           }
-        }
-      } else {
-        // Use public RPC when no wallet is available
-        const rpcEndpoints = [
-          "https://eth-sepolia.public.blastapi.io",
-          "https://sepolia.drpc.org",
-          "https://rpc.sepolia.org",
-        ];
-
-        for (const rpc of rpcEndpoints) {
-          try {
-            provider = new ethers.JsonRpcProvider(rpc);
-            await provider.getNetwork(); // Test connection
-            console.log(`✅ Connected to public RPC: ${rpc}`);
-            break;
-          } catch (rpcError) {
-            console.warn(`Failed to connect to ${rpc}:`, rpcError.message);
-            continue;
-          }
-        }
-
-        if (!provider) {
-          throw new Error("All public RPC endpoints failed to connect");
-        }
-        console.log(
-          "No wallet detected, using public RPC for read-only access"
-        );
-      }
-
-      // Check if contract is deployed
-      const deploymentCheck = await checkContractDeployment(provider);
-      if (!deploymentCheck.isDeployed) {
-        const diagnosis = await diagnoseContractIssue();
-        setContractDiagnosis(diagnosis);
-        throw new Error(
-          diagnosis.issue || "Contract not found at the specified address"
-        );
-      }
-
-      let readOnlyContract;
-
-      if (contract) {
-        // Use connected contract if available
-        const campaignsData = await contract.getAllCampaigns();
-        setCampaigns(campaignsData);
-      } else {
-        // Use read-only contract for browsing
-        readOnlyContract = new ethers.Contract(
-          CONTRACT_ADDRESS,
-          CROWDFUNDING_ABI,
-          provider
-        );
-
-        try {
-          const totalCampaigns = await readOnlyContract.getTotalCampaigns();
-          console.log(
-            "Total campaigns from contract:",
-            totalCampaigns.toString()
+        } catch (providerError) {
+          console.error("Failed to get provider:", providerError);
+          throw new Error(
+            `Provider connection failed: ${providerError.message}`
           );
-
-          if (totalCampaigns == 0) {
-            console.log("No campaigns found in the contract");
-            setCampaigns([]);
-            return;
-          }
-
-          const campaignsData = [];
-          for (let i = 0; i < totalCampaigns; i++) {
-            try {
-              const campaign = await readOnlyContract.getCampaign(i);
-              campaignsData.push({
-                id: campaign.id.toString(),
-                title: campaign.title,
-                description: campaign.description,
-                imageUrl: campaign.imageUrl,
-                owner: campaign.owner,
-                target: ethers.formatEther(campaign.target),
-                deadline: campaign.deadline.toString(),
-                amountCollected: ethers.formatEther(campaign.amountCollected),
-                withdrawn: campaign.withdrawn,
-              });
-            } catch (campaignError) {
-              console.error(`Error fetching campaign ${i}:`, campaignError);
-            }
-          }
-
-          setCampaigns(campaignsData);
-        } catch (contractError) {
-          console.error("Contract call failed:", contractError);
-
-          // Only show error for actual contract issues, not wallet/network issues in browse mode
-          if (
-            !contractError.message.includes("wallet") &&
-            !contractError.message.includes("account") &&
-            !contractError.message.includes("network")
-          ) {
-            const diagnosis = await diagnoseContractIssue(true); // Allow network mismatch for browsing
-            setContractDiagnosis(diagnosis);
-            throw new Error(
-              `Contract interaction failed: ${contractError.message}`
-            );
-          } else {
-            // For wallet/network issues, just log and continue (browsing mode)
-            console.log(
-              "Wallet/network issue detected, but allowing browsing:",
-              contractError.message
-            );
-          }
         }
       }
-    } catch (err) {
-      console.error("Error loading campaigns:", err);
-      setError(err.message);
 
-      // If no diagnosis was set, create one (allow network mismatch for browsing)
-      if (!contractDiagnosis) {
-        const diagnosis = await diagnoseContractIssue(true);
-        setContractDiagnosis(diagnosis);
+      // Create contract instance
+      let contractInstance;
+      if (contract) {
+        contractInstance = contract;
+      } else {
+        try {
+          contractInstance = new ethers.Contract(
+            CONTRACT_ADDRESS,
+            CROWDFUNDING_ABI,
+            provider
+          );
+        } catch (contractError) {
+          console.error("Failed to create contract instance:", contractError);
+          throw new Error(
+            `Contract instantiation failed: ${contractError.message}`
+          );
+        }
+      }
+
+      try {
+        console.log("Fetching campaigns from contract...");
+        const campaignData = await contractInstance.getAllCampaigns();
+        console.log("Raw campaign data:", campaignData);
+
+        if (!campaignData || campaignData.length === 0) {
+          console.log("No campaigns found");
+          setCampaigns([]);
+          setContractDiagnosis(null);
+          return;
+        }
+
+        const formattedCampaigns = campaignData.map((campaign, index) => ({
+          id: campaign.id ? campaign.id.toString() : index.toString(),
+          title: campaign.title || `Campaign ${index + 1}`,
+          description: campaign.description || "No description available",
+          imageUrl: campaign.imageUrl || "/images/placeholder.svg",
+          owner: campaign.owner || "0x0000000000000000000000000000000000000000",
+          target: campaign.target ? ethers.formatEther(campaign.target) : "0",
+          deadline: campaign.deadline ? campaign.deadline.toString() : "0",
+          amountCollected: campaign.amountCollected
+            ? ethers.formatEther(campaign.amountCollected)
+            : "0",
+          withdrawn: campaign.withdrawn || false,
+          donators: campaign.donators || [],
+          donations: campaign.donations || [],
+        }));
+
+        console.log("Formatted campaigns:", formattedCampaigns);
+        setCampaigns(formattedCampaigns);
+        setContractDiagnosis(null);
+      } catch (contractCallError) {
+        console.error("Contract call failed:", contractCallError);
+
+        // Detailed error handling for contract issues
+        if (
+          contractCallError.message.includes("could not decode result data")
+        ) {
+          const diagnosis = await diagnoseContractIssue(
+            CONTRACT_ADDRESS,
+            provider
+          );
+          setContractDiagnosis(diagnosis);
+          throw new Error(`Contract decoding error - ${diagnosis.summary}`);
+        } else if (contractCallError.message.includes("network")) {
+          throw new Error(`Network error: ${contractCallError.message}`);
+        } else {
+          throw new Error(`Contract call failed: ${contractCallError.message}`);
+        }
+      }
+    } catch (error) {
+      console.error("fetchCampaigns error:", error);
+      setError(error.message);
+
+      // Additional diagnostics for persistent errors
+      if (
+        error.message.includes("Contract") ||
+        error.message.includes("decode")
+      ) {
+        try {
+          const diagnosis = await diagnoseContractIssue(CONTRACT_ADDRESS, null);
+          setContractDiagnosis(diagnosis);
+        } catch (diagnosisError) {
+          console.error("Diagnosis failed:", diagnosisError);
+        }
       }
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Fetch campaigns when client is ready
+  useEffect(() => {
+    if (isClient) {
+      fetchCampaigns();
+    }
+    // Note: We're not including fetchCampaigns in deps to avoid useCallback issues
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isClient]);
+
+  // Refetch when contract changes
+  useEffect(() => {
+    if (isClient && contract) {
+      fetchCampaigns();
+    }
+    // Note: We're not including fetchCampaigns in deps to avoid useCallback issues
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contract, isClient]);
+
+  // Retry function for manual retries
   const fetchCampaignsWithRetry = async (maxRetries = 3) => {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         await fetchCampaigns();
         return; // Success, exit retry loop
-      } catch (error) {
-        console.error(`Attempt ${attempt} failed:`, error);
+      } catch (retryError) {
+        console.error(`Attempt ${attempt} failed:`, retryError.message);
         if (attempt === maxRetries) {
-          throw error; // Last attempt failed, throw error
+          throw retryError; // Final attempt failed
         }
-        // Wait before retrying (exponential backoff)
-        await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+        // Wait before retry (exponential backoff)
+        await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
       }
     }
   };
-
-  const getCampaignById = async (id) => {
-    try {
-      if (contract) {
-        return await contract.getCampaign(id);
-      } else {
-        // Use the same provider logic as fetchCampaigns for consistency
-        let provider;
-
-        if (typeof window !== "undefined" && window.ethereum) {
-          try {
-            const browserProvider = new ethers.BrowserProvider(window.ethereum);
-            const network = await browserProvider.getNetwork();
-
-            if (network.chainId.toString() === CHAIN_ID.toString()) {
-              provider = browserProvider;
-            } else {
-              // Use public RPC for wrong network
-              const rpcEndpoints = [
-                "https://eth-sepolia.public.blastapi.io",
-                "https://sepolia.drpc.org",
-                "https://rpc.sepolia.org",
-              ];
-
-              for (const rpc of rpcEndpoints) {
-                try {
-                  provider = new ethers.JsonRpcProvider(rpc);
-                  await provider.getNetwork();
-                  break;
-                } catch (rpcError) {
-                  continue;
-                }
-              }
-            }
-          } catch (error) {
-            // Fallback to public RPC
-            const rpcEndpoints = [
-              "https://eth-sepolia.public.blastapi.io",
-              "https://sepolia.drpc.org",
-              "https://rpc.sepolia.org",
-            ];
-
-            for (const rpc of rpcEndpoints) {
-              try {
-                provider = new ethers.JsonRpcProvider(rpc);
-                await provider.getNetwork();
-                break;
-              } catch (rpcError) {
-                continue;
-              }
-            }
-          }
-        } else {
-          // No wallet, use public RPC
-          const rpcEndpoints = [
-            "https://eth-sepolia.public.blastapi.io",
-            "https://sepolia.drpc.org",
-            "https://rpc.sepolia.org",
-          ];
-
-          for (const rpc of rpcEndpoints) {
-            try {
-              provider = new ethers.JsonRpcProvider(rpc);
-              await provider.getNetwork();
-              break;
-            } catch (rpcError) {
-              continue;
-            }
-          }
-        }
-
-        if (!provider) {
-          throw new Error("Failed to connect to any RPC endpoint");
-        }
-
-        const readOnlyContract = new ethers.Contract(
-          CONTRACT_ADDRESS,
-          CROWDFUNDING_ABI,
-          provider
-        );
-        const campaign = await readOnlyContract.getCampaign(id);
-
-        return {
-          id: campaign.id.toString(),
-          title: campaign.title,
-          description: campaign.description,
-          imageUrl: campaign.imageUrl,
-          owner: campaign.owner,
-          target: ethers.formatEther(campaign.target),
-          deadline: campaign.deadline.toString(),
-          amountCollected: ethers.formatEther(campaign.amountCollected),
-          withdrawn: campaign.withdrawn,
-        };
-      }
-    } catch (err) {
-      console.error("Error fetching campaign:", err);
-      throw err;
-    }
-  };
-
-  const getDonators = async (campaignId) => {
-    try {
-      if (contract) {
-        return await contract.getDonators(campaignId);
-      } else if (typeof window !== "undefined" && window.ethereum) {
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const readOnlyContract = new ethers.Contract(
-          CONTRACT_ADDRESS,
-          CROWDFUNDING_ABI,
-          provider
-        );
-        const [donators, donations] = await readOnlyContract.getDonators(
-          campaignId
-        );
-
-        return {
-          donators,
-          donations: donations.map((d) => ethers.formatEther(d)),
-        };
-      }
-    } catch (err) {
-      console.error("Error fetching donators:", err);
-      throw err;
-    }
-  };
-
-  // Refetch when contract changes and client is ready
-  useEffect(() => {
-    if (isClient && contract) {
-      fetchCampaigns();
-    }
-  }, [contract, isClient]);
 
   return {
     campaigns,
@@ -384,7 +234,5 @@ export const useCampaigns = () => {
     contractDiagnosis,
     fetchCampaigns,
     fetchCampaignsWithRetry,
-    getCampaignById,
-    getDonators,
   };
 };

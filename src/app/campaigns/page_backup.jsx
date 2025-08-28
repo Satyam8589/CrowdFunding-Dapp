@@ -83,7 +83,7 @@ export default function CampaignsPage() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };

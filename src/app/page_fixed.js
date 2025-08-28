@@ -51,7 +51,7 @@ export default function Home() {
               Unable to Load Campaigns
             </h1>
             <p className="text-gray-600 mb-6">
-              We're having trouble connecting to the blockchain. Please try
+              We&apos;re having trouble connecting to the blockchain. Please try
               again later.
             </p>
             <button

@@ -15,7 +15,6 @@ export default function Home() {
     campaigns,
     isLoading,
     error,
-    contractDiagnosis,
     fetchCampaigns,
     fetchCampaignsWithRetry,
   } = useCampaigns();
