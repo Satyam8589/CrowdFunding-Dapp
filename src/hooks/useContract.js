@@ -1,6 +1,7 @@
 import { useAccount, useSigner } from "wagmi";
 import { useState, useEffect } from "react";
 import { getContractInstance } from "../lib/contract";
+import { convertDeadlineToTimestamp } from "../lib/utils";
 import { ethers } from "ethers";
 
 export const useContract = () => {
@@ -51,13 +52,23 @@ export const useContract = () => {
       setIsLoading(true);
       setError(null);
 
+      console.log(
+        "🔍 DEBUG: Starting campaign creation with data:",
+        campaignData
+      );
+
       // Convert target from ETH to wei (BigInt)
       const targetInWei = ethers.parseEther(campaignData.target.toString());
 
-      // Convert deadline to Unix timestamp (BigInt)
-      const deadlineTimestamp = Math.floor(
-        new Date(campaignData.deadline).getTime() / 1000
+      // Convert deadline to Unix timestamp with proper timezone handling
+      console.log(
+        "🔍 DEBUG: About to convert deadline:",
+        campaignData.deadline
       );
+      const deadlineTimestamp = convertDeadlineToTimestamp(
+        campaignData.deadline
+      );
+      console.log("🔍 DEBUG: Converted deadline timestamp:", deadlineTimestamp);
 
       console.log("Creating campaign with:", {
         title: campaignData.title,

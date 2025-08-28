@@ -11,17 +11,42 @@ export class ContractService {
     );
   }
 
-  async createCampaign(title, description, imageUrl, target, deadline) {
+  async createCampaign(
+    title,
+    description,
+    imageUrl,
+    target,
+    deadlineTimestamp
+  ) {
     try {
+      console.log("🔍 DEBUG: ContractService.createCampaign called with:", {
+        title,
+        description,
+        imageUrl,
+        target,
+        deadlineTimestamp,
+        deadlineTimestampType: typeof deadlineTimestamp,
+      });
+
       const targetInWei = ethers.parseEther(target.toString());
-      const deadlineTimestamp = Math.floor(new Date(deadline).getTime() / 1000);
+
+      // deadlineTimestamp should already be a Unix timestamp
+      const finalDeadlineTimestamp =
+        typeof deadlineTimestamp === "number"
+          ? deadlineTimestamp
+          : Math.floor(new Date(deadlineTimestamp).getTime() / 1000);
+
+      console.log("🔍 DEBUG: Final values for contract call:", {
+        targetInWei: targetInWei.toString(),
+        finalDeadlineTimestamp,
+      });
 
       const tx = await this.contract.createCampaign(
         title,
         description,
         imageUrl,
         targetInWei,
-        deadlineTimestamp
+        finalDeadlineTimestamp
       );
 
       return await tx.wait();

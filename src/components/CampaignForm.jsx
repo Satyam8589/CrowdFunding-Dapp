@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useContract } from "../hooks/useContract";
 import { useWallet } from "../hooks/useWallet";
-import { validateImageFile } from "../lib/utils";
+import { validateImageFile, convertDeadlineToTimestamp } from "../lib/utils";
 import {
   generatePlaceholderImage,
   createPreviewUrl,
@@ -147,10 +147,10 @@ export default function CampaignForm({ onSuccess }) {
     if (!formData.deadline) {
       errors.deadline = "Deadline is required";
     } else {
-      const selectedDate = new Date(formData.deadline);
-      const now = new Date();
-      if (selectedDate <= now) {
-        errors.deadline = "Deadline must be in the future";
+      try {
+        convertDeadlineToTimestamp(formData.deadline);
+      } catch (error) {
+        errors.deadline = error.message;
       }
     }
 
@@ -353,7 +353,7 @@ export default function CampaignForm({ onSuccess }) {
           name="deadline"
           value={formData.deadline}
           onChange={handleInputChange}
-          min={new Date().toISOString().slice(0, 16)}
+          min={new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16)}
           className={`w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
             formErrors.deadline ? "border-red-500" : "border-gray-300"
           }`}

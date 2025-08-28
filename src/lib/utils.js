@@ -100,3 +100,51 @@ export const validateImageFile = (file) => {
 
   return { valid: true };
 };
+
+// Convert datetime-local input to Unix timestamp with proper timezone handling
+export const convertDeadlineToTimestamp = (datetimeLocalString) => {
+  console.log(
+    "🔍 DEBUG: convertDeadlineToTimestamp called with:",
+    datetimeLocalString
+  );
+
+  if (!datetimeLocalString) {
+    throw new Error("Deadline is required");
+  }
+
+  // datetime-local format: "YYYY-MM-DDTHH:MM"
+  // We need to treat this as local time, not UTC
+  const date = new Date(datetimeLocalString);
+
+  console.log("🔍 DEBUG: Parsed date object:", date);
+  console.log("🔍 DEBUG: Date.getTime():", date.getTime());
+  console.log("🔍 DEBUG: Date is valid:", !isNaN(date.getTime()));
+
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid deadline format");
+  }
+
+  const currentDate = new Date();
+  const deadlineTimestamp = Math.floor(date.getTime() / 1000);
+  const currentTimestamp = Math.floor(currentDate.getTime() / 1000);
+
+  console.log("Deadline conversion:", {
+    input: datetimeLocalString,
+    parsedDate: date.toISOString(),
+    currentDate: currentDate.toISOString(),
+    deadlineTimestamp,
+    currentTimestamp,
+    isInFuture: deadlineTimestamp > currentTimestamp,
+    timeDifferenceHours: (deadlineTimestamp - currentTimestamp) / 3600,
+  });
+
+  if (deadlineTimestamp <= currentTimestamp) {
+    throw new Error(
+      `Deadline must be in the future. Selected time: ${date.toLocaleString()}, Current time: ${currentDate.toLocaleString()}`
+    );
+  }
+
+  console.log("🔍 DEBUG: Returning timestamp:", deadlineTimestamp);
+  return deadlineTimestamp;
+};
