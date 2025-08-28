@@ -8,10 +8,21 @@ export const useContract = () => {
   const [contract, setContract] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure we're on the client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     const initContract = async () => {
-      if (isConnected && window.ethereum) {
+      if (
+        isClient &&
+        isConnected &&
+        typeof window !== "undefined" &&
+        window.ethereum
+      ) {
         try {
           setIsLoading(true);
           const provider = new ethers.BrowserProvider(window.ethereum);
@@ -31,7 +42,7 @@ export const useContract = () => {
     };
 
     initContract();
-  }, [isConnected, address]);
+  }, [isConnected, address, isClient]);
 
   const createCampaign = async (campaignData) => {
     if (!contract) throw new Error("Contract not initialized");

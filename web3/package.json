@@ -17,6 +17,8 @@
     "verify:sepolia": "hardhat verify --network sepolia",
     "verify:mumbai": "hardhat verify --network mumbai",
     "verify:bsc-testnet": "hardhat verify --network bscTestnet",
+    "verify-deployment": "node scripts/verify-deployment.js",
+    "redeploy": "hardhat run scripts/redeploy.js --network sepolia",
     "node": "hardhat node",
     "clean": "hardhat clean",
     "size": "hardhat size-contracts",

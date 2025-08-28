@@ -8,8 +8,11 @@ import { useCampaigns } from "../../../hooks/useCampaigns";
 import { useContract } from "../../../hooks/useContract";
 import { useWallet } from "../../../hooks/useWallet";
 import ContributeForm from "../../../components/ContributeForm";
+import NetworkRequirement from "../../../components/NetworkRequirement";
+import SmartActionButton from "../../../components/SmartActionButton";
 import ExpandableAddress from "../../../components/ExpandableAddress";
 import Loading from "../../../components/Loading";
+import { useNetwork } from "../../../contexts/NetworkContext";
 import {
   formatAddress,
   formatDate,
@@ -26,6 +29,7 @@ export default function CampaignDetailsPage() {
   const { getCampaignById, getDonators } = useCampaigns();
   const { withdrawFunds, isLoading: contractLoading } = useContract();
   const { address, isConnected } = useWallet();
+  const { canInteract, switchToInteractMode } = useNetwork();
 
   const [campaign, setCampaign] = useState(null);
   const [donators, setDonators] = useState({ donators: [], donations: [] });
@@ -34,6 +38,7 @@ export default function CampaignDetailsPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [showWalletPrompt, setShowWalletPrompt] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -45,9 +50,21 @@ export default function CampaignDetailsPage() {
       setError("");
 
       const campaignData = await getCampaignById(campaignId);
-      const donatorsData = await getDonators(campaignId);
+      // Only fetch donators if wallet is connected (requires contract interaction)
+      let donatorsData = { donators: [], donations: [] };
+      if (isConnected) {
+        try {
+          donatorsData = await getDonators(campaignId);
+        } catch (donatorError) {
+          console.log(
+            "Could not fetch donators (wallet required):",
+            donatorError
+          );
+        }
+      }
 
       setCampaign(campaignData);
+      setDonators(donatorsData);
       setDonators(donatorsData);
     } catch (err) {
       console.error("Error fetching campaign:", err);

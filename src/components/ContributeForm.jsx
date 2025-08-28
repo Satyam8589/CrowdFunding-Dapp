@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import { useContract } from "../hooks/useContract";
 import { useWallet } from "../hooks/useWallet";
+import { useNetwork } from "../contexts/NetworkContext";
+import NetworkRequirement from "./NetworkRequirement";
 import Loading from "./Loading";
 
 export default function ContributeForm({ campaignId, campaign, onSuccess }) {
   const { donateToCampaign, isLoading, error } = useContract();
   const { isConnected, isCorrectNetwork, address } = useWallet();
+  const { canInteract, switchToInteractMode } = useNetwork();
   const [amount, setAmount] = useState("");
   const [formError, setFormError] = useState("");
   const [isMounted, setIsMounted] = useState(false);
@@ -132,87 +135,89 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
           Contribute to this Campaign
         </h3>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="amount"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Amount (ETH)
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                id="amount"
-                value={amount}
-                onChange={handleAmountChange}
-                placeholder="0.001"
-                step="0.001"
-                min="0.001"
-                className={`w-full border rounded-lg px-3 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  formError ? "border-red-500" : "border-gray-300"
-                }`}
-                disabled={isLoading}
-              />
-              <span className="absolute right-3 top-2 text-gray-500 text-sm">
-                ETH
-              </span>
-            </div>
-            {formError && (
-              <p className="text-red-500 text-sm mt-1">{formError}</p>
-            )}
-          </div>
-
-          {/* Quick amount buttons */}
-          <div>
-            <p className="text-sm text-gray-600 mb-2">Quick amounts:</p>
-            <div className="grid grid-cols-4 gap-2">
-              {[0.01, 0.05, 0.1, 0.5].map((quickAmount) => (
-                <button
-                  key={quickAmount}
-                  type="button"
-                  onClick={() => setAmount(quickAmount.toString())}
-                  className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+        <NetworkRequirement action="fund">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label
+                htmlFor="amount"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Amount (ETH)
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  id="amount"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  placeholder="0.001"
+                  step="0.001"
+                  min="0.001"
+                  className={`w-full border rounded-lg px-3 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    formError ? "border-red-500" : "border-gray-300"
+                  }`}
                   disabled={isLoading}
-                >
-                  {quickAmount} ETH
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Error Display */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-              <p className="text-red-700 text-sm">{error}</p>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isLoading || !amount}
-            className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-          >
-            {isLoading ? (
-              <div className="flex items-center justify-center">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                Contributing...
+                />
+                <span className="absolute right-3 top-2 text-gray-500 text-sm">
+                  ETH
+                </span>
               </div>
-            ) : (
-              `Contribute ${amount || "0"} ETH`
-            )}
-          </button>
+              {formError && (
+                <p className="text-red-500 text-sm mt-1">{formError}</p>
+              )}
+            </div>
 
-          {/* Fee Notice */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <p className="text-blue-800 text-xs">
-              Your contribution will be sent directly to the campaign. The
-              campaign creator can withdraw funds after the deadline (with a 1%
-              platform fee).
-            </p>
-          </div>
-        </form>
+            {/* Quick amount buttons */}
+            <div>
+              <p className="text-sm text-gray-600 mb-2">Quick amounts:</p>
+              <div className="grid grid-cols-4 gap-2">
+                {[0.01, 0.05, 0.1, 0.5].map((quickAmount) => (
+                  <button
+                    key={quickAmount}
+                    type="button"
+                    onClick={() => setAmount(quickAmount.toString())}
+                    className="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    disabled={isLoading}
+                  >
+                    {quickAmount} ETH
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Error Display */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-red-700 text-sm">{error}</p>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading || !amount}
+              className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Contributing...
+                </div>
+              ) : (
+                `Contribute ${amount || "0"} ETH`
+              )}
+            </button>
+
+            {/* Fee Notice */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-blue-800 text-xs">
+                Your contribution will be sent directly to the campaign. The
+                campaign creator can withdraw funds after the deadline (with a
+                1% platform fee).
+              </p>
+            </div>
+          </form>
+        </NetworkRequirement>
       </div>
 
       {/* Thank You Popup */}

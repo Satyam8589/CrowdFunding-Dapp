@@ -80,23 +80,30 @@ export default function ConnectWallet() {
   }
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className="flex items-center">
       {connectError && (
-        <span className="text-red-500 text-sm">Connection failed</span>
+        <span className="text-red-500 text-sm mr-2">Connection failed</span>
       )}
 
-      <div className="flex space-x-2">
-        {connectors.map((connector) => (
-          <button
-            key={connector.uid}
-            onClick={() => connectWallet(connector)}
-            disabled={isConnecting}
-            className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            {isConnecting ? "Connecting..." : `Connect ${connector.name}`}
-          </button>
-        ))}
-      </div>
+      <button
+        onClick={() => {
+          // Try to connect with the first available connector (usually MetaMask/Injected)
+          const primaryConnector =
+            connectors.find(
+              (c) =>
+                c.name.toLowerCase().includes("metamask") ||
+                c.name.toLowerCase().includes("injected")
+            ) || connectors[0];
+
+          if (primaryConnector) {
+            connectWallet(primaryConnector);
+          }
+        }}
+        disabled={isConnecting || connectors.length === 0}
+        className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+      >
+        {isConnecting ? "Connecting..." : "Connect Wallet"}
+      </button>
     </div>
   );
 }

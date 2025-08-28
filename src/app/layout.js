@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { config } from "../../config/wagmi";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ErrorBoundary from "../components/ErrorBoundary";
+import NetworkProvider from "../contexts/NetworkContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,13 +36,17 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <WagmiProvider config={config}>
-          <QueryClientProvider client={queryClient}>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </QueryClientProvider>
-        </WagmiProvider>
+        <ErrorBoundary>
+          <WagmiProvider config={config}>
+            <QueryClientProvider client={queryClient}>
+              <NetworkProvider>
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </NetworkProvider>
+            </QueryClientProvider>
+          </WagmiProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
