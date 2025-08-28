@@ -1,0 +1,10 @@
+{
+  "network": "sepolia",
+  "chainId": "11155111",
+  "contractAddress": "0x4c672F0b9290E3e823a43C3cBf2927Bba8a5e4f1",
+  "adminAddress": "0xFA60c99863f9867F65106D36bf23e9260FB9cbd7",
+  "blockNumber": 9081398,
+  "timestamp": "2025-08-28T10:07:20.443Z",
+  "txHash": "0xc1ed08ec84690c21a1ec20ecb103a7c9838ef7a0318ec0a75a2fb6dfb62219c0",
+  "platformFee": "1"
+}

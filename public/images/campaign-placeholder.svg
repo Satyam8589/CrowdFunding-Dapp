@@ -1,0 +1,21 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#f3f4f6"/>
+  <rect x="1" y="1" width="398" height="298" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="8,8"/>
+  
+  <!-- Camera Icon -->
+  <g transform="translate(175, 120)">
+    <rect x="0" y="10" width="50" height="35" rx="5" fill="#9ca3af"/>
+    <rect x="5" y="15" width="40" height="25" rx="3" fill="#6b7280"/>
+    <circle cx="25" cy="27.5" r="8" fill="#374151"/>
+    <circle cx="25" cy="27.5" r="5" fill="#9ca3af"/>
+    <rect x="15" y="5" width="20" height="8" rx="4" fill="#9ca3af"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="200" y="180" text-anchor="middle" fill="#6b7280" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="500">
+    Campaign Image
+  </text>
+  <text x="200" y="200" text-anchor="middle" fill="#9ca3af" font-family="system-ui, -apple-system, sans-serif" font-size="12">
+    Upload an image for your campaign
+  </text>
+</svg>
