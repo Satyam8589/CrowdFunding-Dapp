@@ -92,24 +92,78 @@ export const useContract = () => {
       setIsLoading(true);
       setError(null);
 
-      // Convert amount from ETH to wei if it's a string/number
-      const amountInWei =
-        typeof amount === "string" || typeof amount === "number"
-          ? ethers.parseEther(amount.toString())
-          : amount;
+      console.log("donateToCampaign called with:", {
+        campaignId,
+        amount,
+        amountType: typeof amount,
+        amountValue: amount,
+      });
+
+      // Defensive amount validation and conversion
+      let cleanAmount;
+
+      if (typeof amount === "object" && amount !== null) {
+        console.error("Amount is an object:", amount);
+        throw new Error(
+          "Amount cannot be an object. Please provide a string or number."
+        );
+      }
+
+      if (amount === null || amount === undefined || amount === "") {
+        throw new Error("Amount is required");
+      }
+
+      // Convert to string first, then validate
+      cleanAmount = amount.toString().trim();
+
+      if (cleanAmount === "" || isNaN(parseFloat(cleanAmount))) {
+        throw new Error("Amount must be a valid number");
+      }
+
+      // Ensure it's a positive number
+      const numericAmount = parseFloat(cleanAmount);
+      if (numericAmount <= 0) {
+        throw new Error("Amount must be greater than 0");
+      }
+
+      // Convert amount from ETH to wei
+      const amountInWei = ethers.parseEther(cleanAmount);
 
       console.log("Donating to campaign:", {
         campaignId,
-        amount,
+        originalAmount: amount,
+        cleanAmount,
+        numericAmount,
         amountInWei: amountInWei.toString(),
       });
 
-      const result = await contract.donateToCampaign(campaignId, {
-        value: amountInWei,
-      });
+      const result = await contract.donateToCampaign(campaignId, cleanAmount);
       return result;
     } catch (err) {
-      setError(err.message);
+      // Check if user rejected the transaction
+      const errorMessage = err.message || err.toString() || "";
+      const isUserRejection =
+        errorMessage.includes("User rejected") ||
+        errorMessage.includes("user rejected") ||
+        errorMessage.includes("User denied") ||
+        errorMessage.includes("user denied") ||
+        errorMessage.includes("Transaction was rejected") ||
+        errorMessage.includes("transaction was rejected") ||
+        errorMessage.includes("MetaMask Tx Signature: User denied") ||
+        errorMessage.includes("User cancelled") ||
+        errorMessage.includes("user cancelled") ||
+        err.code === 4001 || // MetaMask rejection code
+        err.code === "ACTION_REJECTED"; // ethers.js rejection code
+
+      // Only log actual errors, not user rejections
+      if (!isUserRejection) {
+        console.error("donateToCampaign error:", err);
+        setError(err.message);
+      } else {
+        // Clear any existing errors for user rejections
+        setError(null);
+      }
+
       throw err;
     } finally {
       setIsLoading(false);

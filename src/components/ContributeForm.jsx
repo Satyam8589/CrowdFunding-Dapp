@@ -16,6 +16,7 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
   const [formError, setFormError] = useState("");
   const [isMounted, setIsMounted] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
+  const [showCancelled, setShowCancelled] = useState(false);
   const [donatedAmount, setDonatedAmount] = useState("");
 
   useEffect(() => {
@@ -63,10 +64,20 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
     if (!validateAmount()) return;
 
     try {
-      await donateToCampaign(campaignId, amount);
+      // Ensure amount is clean before passing to contract
+      const cleanAmount = amount.toString().trim();
+
+      console.log("ContributeForm submitting:", {
+        campaignId,
+        amount,
+        cleanAmount,
+        amountType: typeof amount,
+      });
+
+      await donateToCampaign(campaignId, cleanAmount);
 
       // Store the donated amount and show thank you popup
-      setDonatedAmount(amount);
+      setDonatedAmount(cleanAmount);
       setShowThankYou(true);
 
       // Hide popup after 1 second
@@ -79,7 +90,41 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
         onSuccess();
       }
     } catch (err) {
-      console.error("Failed to contribute:", err);
+      // Check if user rejected the transaction
+      const errorMessage = err.message || err.toString() || "";
+      const isUserRejection =
+        errorMessage.includes("User rejected") ||
+        errorMessage.includes("user rejected") ||
+        errorMessage.includes("User denied") ||
+        errorMessage.includes("user denied") ||
+        errorMessage.includes("Transaction was rejected") ||
+        errorMessage.includes("transaction was rejected") ||
+        errorMessage.includes("MetaMask Tx Signature: User denied") ||
+        errorMessage.includes("User cancelled") ||
+        errorMessage.includes("user cancelled") ||
+        err.code === 4001 || // MetaMask rejection code
+        err.code === "ACTION_REJECTED"; // ethers.js rejection code
+
+      if (isUserRejection) {
+        // Show cancellation popup
+        setShowCancelled(true);
+
+        // Hide popup after 2 seconds
+        setTimeout(() => {
+          setShowCancelled(false);
+        }, 2000);
+
+        // Clear any form errors since this isn't a real error
+        setFormError("");
+      } else {
+        // Only log actual errors, not user rejections
+        console.error("Failed to contribute:", err);
+
+        // Set a user-friendly error message for actual errors
+        setFormError(
+          errorMessage || "Failed to process contribution. Please try again."
+        );
+      }
     }
   };
 
@@ -414,6 +459,39 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
             </p>
             <div className="mt-4">
               <div className="w-12 h-1 bg-gradient-to-r from-green-400 to-green-500 rounded-full mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Transaction Cancelled Popup */}
+      {showCancelled && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl animate-slideUp border-2 border-orange-200">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <svg
+                className="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Funding Cancelled 🚫
+            </h3>
+            <p className="text-gray-600 mb-3">
+              The transaction was cancelled. No funds were transferred.
+            </p>
+            <p className="text-gray-500 text-sm">You can try again anytime!</p>
+            <div className="mt-4">
+              <div className="w-12 h-1 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full mx-auto"></div>
             </div>
           </div>
         </div>

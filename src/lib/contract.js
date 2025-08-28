@@ -33,14 +33,76 @@ export class ContractService {
 
   async donateToCampaign(campaignId, amount) {
     try {
-      const amountInWei = ethers.parseEther(amount.toString());
+      console.log("ContractService.donateToCampaign called with:", {
+        campaignId,
+        amount,
+        amountType: typeof amount,
+        amountValue: amount,
+      });
+
+      // Defensive amount validation and conversion
+      let cleanAmount;
+
+      if (typeof amount === "object" && amount !== null) {
+        console.error("Amount is an object:", amount);
+        throw new Error(
+          "Amount cannot be an object. Please provide a string or number."
+        );
+      }
+
+      if (amount === null || amount === undefined || amount === "") {
+        throw new Error("Amount is required");
+      }
+
+      // Convert to string first, then validate
+      cleanAmount = amount.toString().trim();
+
+      if (cleanAmount === "" || isNaN(parseFloat(cleanAmount))) {
+        throw new Error("Amount must be a valid number");
+      }
+
+      // Ensure it's a positive number
+      const numericAmount = parseFloat(cleanAmount);
+      if (numericAmount <= 0) {
+        throw new Error("Amount must be greater than 0");
+      }
+
+      const amountInWei = ethers.parseEther(cleanAmount);
+
+      console.log("ContractService donating:", {
+        campaignId,
+        originalAmount: amount,
+        cleanAmount,
+        numericAmount,
+        amountInWei: amountInWei.toString(),
+      });
+
       const tx = await this.contract.donateToCampaign(campaignId, {
         value: amountInWei,
       });
 
       return await tx.wait();
     } catch (error) {
-      console.error("Error donating to campaign:", error);
+      // Check if user rejected the transaction
+      const errorMessage = error.message || error.toString() || "";
+      const isUserRejection =
+        errorMessage.includes("User rejected") ||
+        errorMessage.includes("user rejected") ||
+        errorMessage.includes("User denied") ||
+        errorMessage.includes("user denied") ||
+        errorMessage.includes("Transaction was rejected") ||
+        errorMessage.includes("transaction was rejected") ||
+        errorMessage.includes("MetaMask Tx Signature: User denied") ||
+        errorMessage.includes("User cancelled") ||
+        errorMessage.includes("user cancelled") ||
+        error.code === 4001 || // MetaMask rejection code
+        error.code === "ACTION_REJECTED"; // ethers.js rejection code
+
+      // Only log actual errors, not user rejections
+      if (!isUserRejection) {
+        console.error("Error donating to campaign:", error);
+      }
+
       throw error;
     }
   }
