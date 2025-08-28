@@ -50,21 +50,28 @@ export default function CampaignDetailsPage() {
       setError("");
 
       const campaignData = await getCampaignById(campaignId);
-      // Only fetch donators if wallet is connected (requires contract interaction)
+      // Always fetch donators since it's a view function that doesn't require wallet connection
       let donatorsData = { donators: [], donations: [] };
-      if (isConnected) {
-        try {
-          donatorsData = await getDonators(campaignId);
-        } catch (donatorError) {
-          console.log(
-            "Could not fetch donators (wallet required):",
-            donatorError
-          );
+      try {
+        donatorsData = await getDonators(campaignId);
+        console.log("Donators data fetched:", donatorsData);
+        
+        // Temporary test data to verify UI works
+        if (donatorsData.donators.length === 0) {
+          console.log("No donators found, adding test data for debugging");
+          donatorsData = {
+            donators: [
+              "0x1234567890123456789012345678901234567890",
+              "0x0987654321098765432109876543210987654321"
+            ],
+            donations: ["0.1", "0.05"]
+          };
         }
+      } catch (donatorError) {
+        console.log("Could not fetch donators:", donatorError);
       }
 
       setCampaign(campaignData);
-      setDonators(donatorsData);
       setDonators(donatorsData);
     } catch (err) {
       console.error("Error fetching campaign:", err);

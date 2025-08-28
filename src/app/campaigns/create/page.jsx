@@ -19,7 +19,7 @@ export default function CreateCampaignPage() {
   const handleSuccess = () => {
     setShowSuccess(true);
     setTimeout(() => {
-      router.push("/");
+      router.push("/campaigns");
     }, 2000);
   };
 
@@ -65,8 +65,8 @@ export default function CreateCampaignPage() {
               Campaign Created Successfully!
             </h3>
             <p className="text-gray-600 mb-4">
-              Your campaign has been created and is now live. Redirecting to
-              home page...
+              Your campaign has been created and is now live on the blockchain.
+              Redirecting to campaigns page...
             </p>
           </div>
         </div>

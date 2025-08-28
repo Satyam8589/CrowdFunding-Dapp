@@ -5,6 +5,7 @@ import { useContract } from "../hooks/useContract";
 import { useWallet } from "../hooks/useWallet";
 import { useNetwork } from "../contexts/NetworkContext";
 import NetworkRequirement from "./NetworkRequirement";
+import ConnectWallet from "./ConnectWallet";
 import Loading from "./Loading";
 
 export default function ContributeForm({ campaignId, campaign, onSuccess }) {
@@ -89,41 +90,181 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
 
   if (!isConnected) {
     return (
-      <div className="bg-gray-50 rounded-lg p-6 text-center">
-        <p className="text-gray-600 mb-4">
-          Connect your wallet to contribute to this campaign
-        </p>
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Contribute to this Campaign
+        </h3>
+
+        <div className="text-center py-8">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+            </div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              Wallet Required
+            </h4>
+            <p className="text-gray-600 mb-6">
+              To fund this campaign, please connect your wallet first. This
+              ensures secure and transparent donations directly to the campaign
+              creator.
+            </p>
+          </div>
+
+          <div className="flex justify-center">
+            <ConnectWallet />
+          </div>
+
+          <div className="mt-4 text-xs text-gray-500">
+            🔒 Your wallet will be used to securely send ETH directly to the
+            campaign
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!isCorrectNetwork) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-        <p className="text-red-700">
-          Please switch to the correct network to contribute
-        </p>
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Contribute to this Campaign
+        </h3>
+
+        <div className="text-center py-8">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-orange-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+            </div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              Wrong Network
+            </h4>
+            <p className="text-gray-600 mb-6">
+              Please switch to the Sepolia testnet to contribute to this
+              campaign. This ensures your transaction is processed on the
+              correct blockchain.
+            </p>
+          </div>
+
+          <div className="flex justify-center">
+            <ConnectWallet />
+          </div>
+
+          <div className="mt-4 text-xs text-gray-500">
+            ⚠️ This DApp only works on Sepolia testnet for security
+          </div>
+        </div>
       </div>
     );
   }
 
   if (isOwner) {
     return (
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-        <p className="text-blue-700">
-          You cannot contribute to your own campaign
-        </p>
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Contribute to this Campaign
+        </h3>
+
+        <div className="text-center py-8">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              Campaign Owner
+            </h4>
+            <p className="text-gray-600 mb-4">
+              You are the owner of this campaign. Campaign creators cannot
+              contribute to their own campaigns to ensure transparency and
+              fairness.
+            </p>
+          </div>
+
+          <div className="text-xs text-gray-500 bg-blue-50 rounded-lg p-3">
+            💡 Share your campaign with others to get contributions!
+          </div>
+        </div>
       </div>
     );
   }
 
   if (isExpired || isWithdrawn) {
     return (
-      <div className="bg-gray-50 rounded-lg p-6 text-center">
-        <p className="text-gray-600">
-          This campaign has{" "}
-          {isWithdrawn ? "ended and funds have been withdrawn" : "expired"}
-        </p>
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Contribute to this Campaign
+        </h3>
+
+        <div className="text-center py-8">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">
+              Campaign {isWithdrawn ? "Completed" : "Expired"}
+            </h4>
+            <p className="text-gray-600 mb-4">
+              This campaign has{" "}
+              {isWithdrawn
+                ? "ended and funds have been withdrawn by the creator"
+                : "expired and is no longer accepting contributions"}
+              .
+            </p>
+          </div>
+
+          <div className="text-xs text-gray-500 bg-gray-50 rounded-lg p-3">
+            {isWithdrawn
+              ? "✅ Funds successfully withdrawn"
+              : "⏰ Deadline has passed"}
+          </div>
+        </div>
       </div>
     );
   }
