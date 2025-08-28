@@ -30,9 +30,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Show latest 6 campaigns on home page
+    // Show latest 3 campaigns on home page
     if (campaigns.length > 0) {
-      setFeaturedCampaigns(campaigns.slice(-6).reverse());
+      setFeaturedCampaigns(campaigns.slice(-3).reverse());
     }
   }, [campaigns]);
 
