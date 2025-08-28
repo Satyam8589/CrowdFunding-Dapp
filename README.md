@@ -1,5 +1,7 @@
 # 🌟 CrowdFunding DApp - Decentralized Crowdfunding Platform
 
+![CrowdFunding DApp](https://github.com/Satyam8589/CrowdFunding-Dapp/blob/main/Screenshot%202025-08-29%20022017.png?raw=true)
+
 A modern, decentralized crowdfunding platform built on Ethereum blockchain that enables transparent, secure, and trustless fundraising campaigns with beautiful UI/UX design.
 
 ## ✨ Features
