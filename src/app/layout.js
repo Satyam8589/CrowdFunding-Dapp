@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
           name="description"
           content="A decentralized crowdfunding platform built on Ethereum blockchain"
         />
-        <link rel="icon" href="/icons/logo.avif" type="image/png" />
+        <link rel="icon" href="icons\logo.svg" type="icons/svg" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
