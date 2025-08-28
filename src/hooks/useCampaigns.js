@@ -597,7 +597,9 @@ export const useCampaigns = () => {
       }
 
       // Fetch donators - this is a view function so it works without wallet
-      const [donators, donations] = await contractInstance.getDonators(campaignId);
+      const [donators, donations] = await contractInstance.getDonators(
+        campaignId
+      );
 
       console.log("Raw donators data:", { donators, donations });
       console.log("Donators length:", donators?.length);
