@@ -1,11 +1,13 @@
-import { useAccount, useSigner } from "wagmi";
+import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { useState, useEffect } from "react";
 import { getContractInstance } from "../lib/contract";
 import { convertDeadlineToTimestamp } from "../lib/utils";
 import { ethers } from "ethers";
 
 export const useContract = () => {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, connector } = useAccount();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const [contract, setContract] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,32 +20,81 @@ export const useContract = () => {
 
   useEffect(() => {
     const initContract = async () => {
-      if (
-        isClient &&
-        isConnected &&
-        typeof window !== "undefined" &&
-        window.ethereum
-      ) {
+      if (isClient && isConnected && walletClient) {
         try {
           setIsLoading(true);
-          const provider = new ethers.BrowserProvider(window.ethereum);
-          const signer = await provider.getSigner();
+          console.log("🔄 Initializing contract...", {
+            isConnected,
+            walletClient: !!walletClient,
+            connector: connector?.name,
+          });
+
+          // Create provider and signer based on the wallet client
+          let provider, signer;
+
+          if (walletClient) {
+            // For wagmi v2, we need to use the walletClient directly
+            if (
+              typeof window !== "undefined" &&
+              window.ethereum &&
+              connector?.name !== "WalletConnect"
+            ) {
+              // Use window.ethereum for injected wallets (MetaMask mobile, etc.)
+              provider = new ethers.BrowserProvider(window.ethereum);
+              signer = await provider.getSigner();
+            } else {
+              // For WalletConnect and other non-injected wallets
+              // Create a custom provider from walletClient
+              provider = new ethers.BrowserProvider({
+                request: walletClient.request.bind(walletClient),
+              });
+              signer = await provider.getSigner();
+            }
+          } else if (typeof window !== "undefined" && window.ethereum) {
+            // Fallback to window.ethereum
+            provider = new ethers.BrowserProvider(window.ethereum);
+            signer = await provider.getSigner();
+          } else {
+            throw new Error(
+              "No wallet provider available. Please ensure your wallet is properly connected."
+            );
+          }
+
           const contractInstance = getContractInstance(signer);
           setContract(contractInstance);
           setError(null);
+          console.log("✅ Contract initialized successfully");
         } catch (err) {
-          console.error("Failed to initialize contract:", err);
-          setError(err.message);
+          console.error("❌ Failed to initialize contract:", err);
+          setError(`Contract initialization failed: ${err.message}`);
+
+          // For mobile wallets, show more helpful error message
+          if (
+            err.message.includes("No wallet provider") ||
+            err.message.includes("walletClient")
+          ) {
+            setError(
+              "Please make sure your wallet app is open and connected, then refresh the page."
+            );
+          }
         } finally {
           setIsLoading(false);
         }
       } else {
         setContract(null);
+        if (isClient) {
+          console.log("⚠️ Contract not initialized:", {
+            isConnected,
+            walletClient: !!walletClient,
+            isClient,
+            connectorName: connector?.name,
+          });
+        }
       }
     };
 
     initContract();
-  }, [isConnected, address, isClient]);
+  }, [isConnected, address, isClient, walletClient, connector]);
 
   const createCampaign = async (campaignData) => {
     if (!contract) throw new Error("Contract not initialized");
@@ -97,7 +148,56 @@ export const useContract = () => {
   };
 
   const donateToCampaign = async (campaignId, amount) => {
-    if (!contract) throw new Error("Contract not initialized");
+    // Enhanced mobile wallet compatibility - retry contract initialization if needed
+    if (!contract) {
+      console.log("🔄 Contract not ready, attempting to initialize...");
+
+      // Try to reinitialize contract for mobile wallets
+      if (isConnected && walletClient) {
+        try {
+          let provider, signer;
+
+          if (
+            typeof window !== "undefined" &&
+            window.ethereum &&
+            connector?.name !== "WalletConnect"
+          ) {
+            // Use window.ethereum for injected wallets (MetaMask mobile, etc.)
+            provider = new ethers.BrowserProvider(window.ethereum);
+            signer = await provider.getSigner();
+          } else {
+            // For WalletConnect and other non-injected wallets
+            provider = new ethers.BrowserProvider({
+              request: walletClient.request.bind(walletClient),
+            });
+            signer = await provider.getSigner();
+          }
+
+          const contractInstance = getContractInstance(signer);
+          setContract(contractInstance);
+          console.log("✅ Contract reinitialized successfully for mobile");
+
+          // Use the newly initialized contract for this transaction
+          contract = contractInstance;
+        } catch (retryError) {
+          console.error("❌ Failed to reinitialize contract:", retryError);
+          throw new Error(
+            "Unable to initialize contract. Please try connecting your wallet again."
+          );
+        }
+      } else {
+        throw new Error(
+          "Wallet not connected. Please connect your wallet and try again."
+        );
+      }
+    }
+
+    // Final check to ensure contract is available
+    if (!contract) {
+      throw new Error(
+        "Contract initialization failed. Please refresh the page and try again."
+      );
+    }
 
     try {
       setIsLoading(true);

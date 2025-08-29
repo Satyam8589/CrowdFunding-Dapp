@@ -9,7 +9,11 @@ import ConnectWallet from "./ConnectWallet";
 import Loading from "./Loading";
 
 export default function ContributeForm({ campaignId, campaign, onSuccess }) {
-  const { donateToCampaign, isLoading, error } = useContract();
+  const {
+    donateToCampaign,
+    isLoading: contractLoading,
+    error: contractError,
+  } = useContract();
   const { isConnected, isCorrectNetwork, address } = useWallet();
   const { canInteract, switchToInteractMode } = useNetwork();
   const [amount, setAmount] = useState("");
@@ -18,10 +22,23 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
   const [showThankYou, setShowThankYou] = useState(false);
   const [showCancelled, setShowCancelled] = useState(false);
   const [donatedAmount, setDonatedAmount] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Clear form error when contract error changes (useful for mobile wallet reconnection)
+  useEffect(() => {
+    if (
+      contractError &&
+      contractError.includes("Contract initialization failed")
+    ) {
+      setFormError(
+        "Wallet connection issue detected. Please try refreshing the page or reconnecting your wallet."
+      );
+    }
+  }, [contractError]);
 
   const isOwner =
     address && campaign.owner.toLowerCase() === address.toLowerCase();
@@ -64,6 +81,9 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
     if (!validateAmount()) return;
 
     try {
+      setIsSubmitting(true);
+      setFormError(""); // Clear any previous errors
+
       // Ensure amount is clean before passing to contract
       const cleanAmount = amount.toString().trim();
 
@@ -105,6 +125,12 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
         err.code === 4001 || // MetaMask rejection code
         err.code === "ACTION_REJECTED"; // ethers.js rejection code
 
+      // Check for mobile wallet specific issues
+      const isMobileWalletIssue =
+        errorMessage.includes("Contract not initialized") ||
+        errorMessage.includes("Unable to initialize contract") ||
+        errorMessage.includes("Wallet not connected");
+
       if (isUserRejection) {
         // Show cancellation popup
         setShowCancelled(true);
@@ -116,6 +142,12 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
 
         // Clear any form errors since this isn't a real error
         setFormError("");
+      } else if (isMobileWalletIssue) {
+        // Handle mobile wallet connection issues with helpful message
+        console.error("Mobile wallet connection issue:", err);
+        setFormError(
+          "Wallet connection issue. Please ensure your wallet app is open and connected, then try again. If the problem persists, try refreshing the page."
+        );
       } else {
         // Only log actual errors, not user rejections
         console.error("Failed to contribute:", err);
@@ -125,6 +157,8 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
           errorMessage || "Failed to process contribution. Please try again."
         );
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -411,7 +445,7 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
                         ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
                         : "border-gray-200 hover:border-blue-300"
                     }`}
-                    disabled={isLoading}
+                    disabled={contractLoading || isSubmitting}
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-md">
                     ETH
@@ -440,7 +474,7 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
                       type="button"
                       onClick={() => setAmount(quickAmount.toString())}
                       className="group relative px-4 py-3 bg-gradient-to-r from-gray-50 to-white border-2 border-gray-200 rounded-xl hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                      disabled={isLoading}
+                      disabled={contractLoading || isSubmitting}
                     >
                       <span className="text-sm font-semibold text-gray-700 group-hover:text-blue-700">
                         {quickAmount}
@@ -454,11 +488,13 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
               </div>
 
               {/* Error Display */}
-              {error && (
+              {(formError || contractError) && (
                 <div className="bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-xl p-4 shadow-lg">
                   <div className="flex items-center space-x-3">
                     <span className="text-red-500 text-xl">🚨</span>
-                    <p className="text-red-700 font-medium">{error}</p>
+                    <p className="text-red-700 font-medium">
+                      {formError || contractError}
+                    </p>
                   </div>
                 </div>
               )}
@@ -466,13 +502,15 @@ export default function ContributeForm({ campaignId, campaign, onSuccess }) {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isLoading || !amount}
+                disabled={contractLoading || isSubmitting || !amount}
                 className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 disabled:transform-none disabled:hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/30"
               >
-                {isLoading ? (
+                {contractLoading || isSubmitting ? (
                   <div className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
-                    <span className="text-lg">Contributing...</span>
+                    <span className="text-lg">
+                      {contractLoading ? "Initializing..." : "Contributing..."}
+                    </span>
                   </div>
                 ) : (
                   <span className="text-lg flex items-center justify-center">
