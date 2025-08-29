@@ -19,9 +19,15 @@ export default function ConnectWallet() {
   } = useWallet();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const [walletMenuPosition, setWalletMenuPosition] = useState({
+    top: 0,
+    left: 0,
+  });
   const buttonRef = useRef(null);
+  const walletButtonRef = useRef(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -36,6 +42,16 @@ export default function ConnectWallet() {
       });
     }
   }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (isWalletMenuOpen && walletButtonRef.current) {
+      const rect = walletButtonRef.current.getBoundingClientRect();
+      setWalletMenuPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX,
+      });
+    }
+  }, [isWalletMenuOpen]);
 
   // Prevent hydration mismatch by not rendering wallet-dependent content until mounted
   if (!isMounted) {
@@ -157,25 +173,134 @@ export default function ConnectWallet() {
         <span className="text-red-500 text-sm mr-2">Connection failed</span>
       )}
 
-      <button
-        onClick={() => {
-          // Try to connect with the first available connector (usually MetaMask/Injected)
-          const primaryConnector =
-            connectors.find(
-              (c) =>
-                c.name.toLowerCase().includes("metamask") ||
-                c.name.toLowerCase().includes("injected")
-            ) || connectors[0];
+      <div className="relative">
+        <button
+          ref={walletButtonRef}
+          onClick={() => setIsWalletMenuOpen(!isWalletMenuOpen)}
+          disabled={isConnecting || connectors.length === 0}
+          className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors font-medium flex items-center space-x-2"
+        >
+          <span>{isConnecting ? "Connecting..." : "Connect Wallet"}</span>
+          <svg
+            className={`w-4 h-4 transition-transform ${
+              isWalletMenuOpen ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
 
-          if (primaryConnector) {
-            connectWallet(primaryConnector);
-          }
-        }}
-        disabled={isConnecting || connectors.length === 0}
-        className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors font-medium"
-      >
-        {isConnecting ? "Connecting..." : "Connect Wallet"}
-      </button>
+        {/* Wallet Selection Menu */}
+        {isWalletMenuOpen &&
+          isMounted &&
+          createPortal(
+            <>
+              {/* Backdrop to close menu when clicking outside */}
+              <div
+                className="fixed inset-0 z-[9998]"
+                onClick={() => setIsWalletMenuOpen(false)}
+              ></div>
+
+              <div
+                className="fixed min-w-64 bg-white border border-gray-200 rounded-lg shadow-xl z-[9999]"
+                style={{
+                  top: `${walletMenuPosition.top}px`,
+                  left: `${walletMenuPosition.left}px`,
+                }}
+              >
+                <div className="p-3 border-b border-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    Choose Wallet
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Select your preferred wallet to connect
+                  </p>
+                </div>
+
+                <div className="p-2">
+                  {connectors.map((connector) => (
+                    <button
+                      key={connector.id}
+                      onClick={() => {
+                        connectWallet(connector);
+                        setIsWalletMenuOpen(false);
+                      }}
+                      disabled={isConnecting}
+                      className="w-full text-left p-3 hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3 group disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {/* Wallet Icon */}
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-4 h-4 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                          />
+                        </svg>
+                      </div>
+
+                      {/* Wallet Info */}
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900 group-hover:text-blue-600">
+                          {connector.name}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {connector.type === "injected" && "Browser Extension"}
+                          {connector.type === "walletConnect" &&
+                            "Mobile & Desktop"}
+                          {connector.type === "coinbaseWallet" &&
+                            "Coinbase Wallet"}
+                          {![
+                            "injected",
+                            "walletConnect",
+                            "coinbaseWallet",
+                          ].includes(connector.type) &&
+                            "Connect using " + connector.name}
+                        </div>
+                      </div>
+
+                      {/* Arrow */}
+                      <svg
+                        className="w-4 h-4 text-gray-400 group-hover:text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+
+                {connectors.length === 0 && (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    No wallets detected. Please install a wallet extension.
+                  </div>
+                )}
+              </div>
+            </>,
+            document.body
+          )}
+      </div>
     </div>
   );
 }
