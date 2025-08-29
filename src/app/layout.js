@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ErrorBoundary from "../components/ErrorBoundary";
 import NetworkProvider from "../contexts/NetworkContext";
+import InstallPWA from "../components/InstallPWA";
 import "./globals.css";
 import { useState, useEffect } from "react";
 
@@ -36,6 +37,18 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     setIsMounted(true);
+    
+    // Register service worker for PWA
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((registration) => {
+          console.log('Service Worker registration successful:', registration);
+        })
+        .catch((error) => {
+          console.log('Service Worker registration failed:', error);
+        });
+    }
   }, []);
 
   // Prevent hydration mismatch by not rendering dynamic content until mounted
@@ -48,7 +61,25 @@ export default function RootLayout({ children }) {
             name="description"
             content="A decentralized crowdfunding platform built on Ethereum blockchain"
           />
-          <link rel="icon" href="icons\logo.svg" type="icons/svg" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="theme-color" content="#3b82f6" />
+          
+          {/* Favicon and Icons */}
+          <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
+          <link rel="icon" href="/icons/logo_circle.png" type="image/png" />
+          <link rel="apple-touch-icon" href="/icons/logo_circle.png" />
+          
+          {/* PWA Manifest */}
+          <link rel="manifest" href="/manifest.json" />
+          
+          {/* PWA Meta Tags */}
+          <meta name="application-name" content="CrowdFund" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+          <meta name="apple-mobile-web-app-title" content="CrowdFund" />
+          <meta name="mobile-web-app-capable" content="yes" />
+          <meta name="msapplication-TileColor" content="#3b82f6" />
+          <meta name="msapplication-tap-highlight" content="no" />
         </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50`}
@@ -69,7 +100,25 @@ export default function RootLayout({ children }) {
           name="description"
           content="A decentralized crowdfunding platform built on Ethereum blockchain"
         />
-        <link rel="icon" href="icons\logo.svg" type="icons/svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#3b82f6" />
+        
+        {/* Favicon and Icons */}
+        <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
+        <link rel="icon" href="/icons/logo_circle.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/icons/logo_circle.png" />
+        
+        {/* PWA Manifest */}
+        <link rel="manifest" href="/manifest.json" />
+        
+        {/* PWA Meta Tags */}
+        <meta name="application-name" content="CrowdFund" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="CrowdFund" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="msapplication-TileColor" content="#3b82f6" />
+        <meta name="msapplication-tap-highlight" content="no" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50`}
@@ -89,6 +138,7 @@ export default function RootLayout({ children }) {
                   <div className="relative z-10">{children}</div>
                 </main>
                 <Footer />
+                <InstallPWA />
               </NetworkProvider>
             </QueryClientProvider>
           </WagmiProvider>
