@@ -37,16 +37,16 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     setIsMounted(true);
-    
+
     // Register service worker for PWA
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       navigator.serviceWorker
-        .register('/sw.js')
+        .register("/sw.js")
         .then((registration) => {
-          console.log('Service Worker registration successful:', registration);
+          console.log("Service Worker registration successful:", registration);
         })
         .catch((error) => {
-          console.log('Service Worker registration failed:', error);
+          console.log("Service Worker registration failed:", error);
         });
     }
   }, []);
@@ -63,19 +63,22 @@ export default function RootLayout({ children }) {
           />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="theme-color" content="#3b82f6" />
-          
+
           {/* Favicon and Icons */}
           <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
           <link rel="icon" href="/icons/logo_circle.png" type="image/png" />
           <link rel="apple-touch-icon" href="/icons/logo_circle.png" />
-          
+
           {/* PWA Manifest */}
           <link rel="manifest" href="/manifest.json" />
-          
+
           {/* PWA Meta Tags */}
           <meta name="application-name" content="CrowdFund" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+          <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="default"
+          />
           <meta name="apple-mobile-web-app-title" content="CrowdFund" />
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="msapplication-TileColor" content="#3b82f6" />
@@ -102,15 +105,15 @@ export default function RootLayout({ children }) {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#3b82f6" />
-        
+
         {/* Favicon and Icons */}
         <link rel="icon" href="/icons/logo.svg" type="image/svg+xml" />
         <link rel="icon" href="/icons/logo_circle.png" type="image/png" />
         <link rel="apple-touch-icon" href="/icons/logo_circle.png" />
-        
+
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />
-        
+
         {/* PWA Meta Tags */}
         <meta name="application-name" content="CrowdFund" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
